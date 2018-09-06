@@ -97,17 +97,18 @@ func HuobiWsConnect(symbolList []string) {
 		if strings.Contains(revMsg, "ping") {
 			ws.Write([]byte(strings.Replace(revMsg, "ping", "pong", 1)))
 		}
-		log.Println("接收：", revMsg)
+		log.Println("Huobi接收：", revMsg)
 		var tradeDetail tradeDetail
 		err = json.Unmarshal(b, &tradeDetail)
 		if err != nil {
-			log.Panic(err)
+			log.Println(err)
+			continue
 		}
 		//json , _ :=simplejson.NewJson(b)
 		//temp ,_ :=json.Marshal(tradeDetail)
 		if tradeDetail.Ch != "" {
 			//log.Println("转化：", string(temp))
-			log.Println("转化对象：", tradeDetail)
+			log.Println("Huobi输出对象：", tradeDetail)
 		}
 	}
 	ws.Close() //关闭连接

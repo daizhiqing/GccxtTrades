@@ -6,7 +6,23 @@ import (
 	"golang.org/x/net/websocket"
 	"log"
 	"strconv"
+	"encoding/json"
 )
+
+type detail struct {
+	Amount string `json:"amount"`
+	Price string `json:"price"`
+	Tid int `json:"tid"`
+	Date int `json:"date"`
+	Type string `json:"type"`  // sell  || buy
+	Trade_type string `json:"trade_type"`
+}
+
+type tradeDetail struct {
+	DataType string `json:"dataType"`
+	Data []detail `json:"data"`
+	Channel string `json:"channel"`
+}
 
 func ZbWsConnect(symbolList []string) {
 
@@ -51,6 +67,15 @@ func ZbWsConnect(symbolList []string) {
 		}
 		//连接正常重置
 		readErrCount = 0
-		log.Printf("接收：%s \n", msg[:m])
+		log.Printf("Zb接收：%s \n", msg[:m])
+		var tradeDetail tradeDetail
+		err = json.Unmarshal(msg[:m], &tradeDetail)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		if tradeDetail.Channel != "" {
+			log.Println("Zb输出对象：", tradeDetail)
+		}
 	}
 }
