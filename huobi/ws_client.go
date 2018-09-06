@@ -42,7 +42,7 @@ type tradeDetail struct {
 func HuobiWsConnect(symbolList []string) {
 
 	if len(symbolList) <= 0 {
-		log.Panic(errors.New("订阅的交易对数量为空"))
+		log.Panic(errors.New("火币订阅的交易对数量为空"))
 	}
 
 	ws, err := websocket.Dial(config.HuoBiWsUrl, "", config.HuoBiOrigin)

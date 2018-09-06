@@ -7,7 +7,7 @@ const (
 	HuoBiOrigin = "https://api.huobi.br.com/"
 	HuoBiWsUrl  = "wss://api.huobi.br.com/ws"
 
-	HuoBiMsgBufferSize = 512
+	HuoBiMsgBufferSize = DEFAULT_BUFFER_SIZE
 
 	//订阅的Generated ID
 	HuoBiGId = 1000
