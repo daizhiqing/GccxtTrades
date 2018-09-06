@@ -33,7 +33,7 @@ type tick struct {
 	Data []trade `json:"data"`
 }
 
-type tradeDetail struct {
+type TradeDetail struct {
 	Ch   string `json:"ch"`
 	Ts   int    `json:"ts"`
 	Tick tick   `json:"tick"`
@@ -98,7 +98,7 @@ func HuobiWsConnect(symbolList []string) {
 			ws.Write([]byte(strings.Replace(revMsg, "ping", "pong", 1)))
 		}
 		log.Println("Huobi接收：", revMsg)
-		var tradeDetail tradeDetail
+		var tradeDetail TradeDetail
 		err = json.Unmarshal(b, &tradeDetail)
 		if err != nil {
 			log.Println(err)

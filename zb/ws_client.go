@@ -18,7 +18,7 @@ type detail struct {
 	Trade_type string `json:"trade_type"`
 }
 
-type tradeDetail struct {
+type TradeDetail struct {
 	DataType string `json:"dataType"`
 	Data []detail `json:"data"`
 	Channel string `json:"channel"`
@@ -68,7 +68,7 @@ func ZbWsConnect(symbolList []string) {
 		//连接正常重置
 		readErrCount = 0
 		log.Printf("Zb接收：%s \n", msg[:m])
-		var tradeDetail tradeDetail
+		var tradeDetail TradeDetail
 		err = json.Unmarshal(msg[:m], &tradeDetail)
 		if err != nil {
 			log.Println(err)
