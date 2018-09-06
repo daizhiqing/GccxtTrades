@@ -3,7 +3,7 @@ package config
 const (
 	ZbErrorLimit = DEFAULT
 
-	ZbMsgBufferSize = DEFAULT_BUFFER_SIZE * 2
+	ZbMsgBufferSize = DEFAULT_BUFFER_SIZE * 10
 
 
 	ZbOrigi = "https://api.zb.cn/"

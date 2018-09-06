@@ -35,13 +35,14 @@ func ZbWsConnect(symbolList []string) {
 
 	//统计连续错误次数
 	var readErrCount = 0
+
+	var msg = make([]byte, config.ZbMsgBufferSize)
+
 	for {
 		if readErrCount > config.ZbErrorLimit {
 			//异常退出
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
 		}
-
-		var msg = make([]byte, config.ZbMsgBufferSize)
 		m, err := ws.Read(msg)
 		if err != nil {
 			log.Println(err.Error())

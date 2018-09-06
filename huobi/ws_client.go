@@ -68,14 +68,12 @@ func HuobiWsConnect(symbolList []string) {
 	}
 	//统计连续错误次数
 	var readErrCount = 0
-
+	var msg = make([]byte, config.HuoBiMsgBufferSize)
 	for {
 		if readErrCount > config.HuoBiErroLimit {
 			//异常退出
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
 		}
-		var msg = make([]byte, config.HuoBiMsgBufferSize)
-
 		m, err := ws.Read(msg)
 		if err != nil {
 			log.Println(err.Error())
