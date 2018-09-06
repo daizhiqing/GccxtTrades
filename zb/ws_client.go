@@ -27,7 +27,8 @@ type TradeDetail struct {
 func ZbWsConnect(symbolList []string) {
 
 	if len(symbolList) <= 0 {
-		log.Panic(errors.New("ZB订阅的交易对数量为空"))
+		log.Println(errors.New("ZB订阅的交易对数量为空"))
+		return
 	}
 
 	ws, err := websocket.Dial(config.ZbWsUrl, "", config.ZbOrigi)
@@ -78,4 +79,5 @@ func ZbWsConnect(symbolList []string) {
 			log.Println("Zb输出对象：", tradeDetail)
 		}
 	}
+	ws.Close() //关闭连接
 }
