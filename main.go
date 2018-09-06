@@ -1,22 +1,21 @@
 package main
 
-
 import (
-	"golang.org/x/net/websocket"
 	"fmt"
+	"golang.org/x/net/websocket"
+	"log"
 	"net/http"
 	"runtime"
-	"log"
 )
 
 func echoHandler(ws *websocket.Conn) {
 	msg := make([]byte, 512)
-	for   {
-		if ws.IsClientConn(){
-			log.Print("IsClientConn.........." )
+	for {
+		if ws.IsClientConn() {
+			log.Print("IsClientConn..........")
 		}
-		if ws.IsServerConn(){
-			log.Print("IsServerConn.........." )
+		if ws.IsServerConn() {
+			log.Print("IsServerConn..........")
 		}
 		n, err := ws.Read(msg)
 		if err != nil {

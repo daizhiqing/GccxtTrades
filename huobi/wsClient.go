@@ -9,9 +9,9 @@ import (
 	"golang.org/x/net/websocket"
 	"io/ioutil"
 	"log"
+	"math/big"
 	"strconv"
 	"strings"
-	"math/big"
 )
 
 type subModel struct {
@@ -20,23 +20,23 @@ type subModel struct {
 }
 
 type trade struct {
-	Id big.Int `json:"id"`
-	Price  float32 `json:"price"`
-	Direction string `json:"direction"`
-	Amount float32 `json:"amount"`
-	Ts int `json:"ts"`
+	Id        big.Int `json:"id"`
+	Price     float32 `json:"price"`
+	Direction string  `json:"direction"`
+	Amount    float32 `json:"amount"`
+	Ts        int     `json:"ts"`
 }
 
 type tick struct {
-	Id int `json:"id"`
-	Ts int `json:"ts"`
+	Id   int     `json:"id"`
+	Ts   int     `json:"ts"`
 	Data []trade `json:"data"`
 }
 
 type tradeDetail struct {
-	Ch string `json:"ch"`
-	Ts int `json:"ts"`
-	Tick tick `json:"tick"`
+	Ch   string `json:"ch"`
+	Ts   int    `json:"ts"`
+	Tick tick   `json:"tick"`
 }
 
 func HuobiWsConnect(symbolList []string) {
@@ -52,8 +52,8 @@ func HuobiWsConnect(symbolList []string) {
 		return
 	}
 	//循环订阅交易对
-	for _,symbol := range symbolList{
-		sub := subModel{"market."+symbol+".trade.detail", config.HuoBiGId}
+	for _, symbol := range symbolList {
+		sub := subModel{"market." + symbol + ".trade.detail", config.HuoBiGId}
 		message, err := json.Marshal(sub)
 		if err != nil {
 			log.Println(err.Error())
@@ -101,8 +101,8 @@ func HuobiWsConnect(symbolList []string) {
 		}
 		log.Println("接收：", revMsg)
 		var tradeDetail tradeDetail
-		err  = json.Unmarshal(b , &tradeDetail)
-		if err != nil{
+		err = json.Unmarshal(b, &tradeDetail)
+		if err != nil {
 			log.Panic(err)
 		}
 		//json , _ :=simplejson.NewJson(b)
