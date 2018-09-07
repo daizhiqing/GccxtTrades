@@ -30,7 +30,6 @@ func ZbWsConnect(symbolList []string) {
 		log.Println(errors.New("ZB订阅的交易对数量为空"))
 		return
 	}
-
 	ws, err := websocket.Dial(config.ZbWsUrl, "", config.ZbOrigi)
 
 	if err != nil {
