@@ -1,9 +1,12 @@
-package config
+package okex
+
+import "ccxt/config"
 
 const (
 
-	OkexBufferSize = DEFAULT_BUFFER_SIZE
+	OkexBufferSize = config.DEFAULT_BUFFER_SIZE
 
+	OKexErrLimit = config.DEFAULT
 
 	OkexOrigin = "https://real.okex.com"
 	OkexWsUrl =  "wss://real.okex.com:10441/websocket"  //线上

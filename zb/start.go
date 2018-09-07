@@ -2,7 +2,6 @@ package zb
 
 import (
 	"ccxt/utils"
-	"ccxt/config"
 	"strings"
 	"log"
 )
@@ -14,7 +13,7 @@ func StartWs(proxy string , useProxy bool)  {
 		utils.ProxyUrl = proxy
 	}
 	var syListZb []string
-	zbSym,_ := utils.HttpGet(config.ZbSymbols).Map()
+	zbSym,_ := utils.HttpGet(ZbSymbols).Map()
 	for key ,_ := range zbSym {
 		syListZb = append(syListZb , strings.Replace(key , "_" , "" , -1))
 	}

@@ -3,7 +3,6 @@ package okex
 import (
 	"log"
 	"golang.org/x/net/websocket"
-	"ccxt/config"
 	"errors"
 	"strconv"
 	"encoding/json"
@@ -30,7 +29,7 @@ func OkexWsConnect(symbolList []string) {
 		log.Panic(errors.New("Okex订阅的交易对数量为空"))
 	}
 
-	ws, err := websocket.Dial(config.OkexWsUrl, "", config.OkexOrigin)
+	ws, err := websocket.Dial(OkexWsUrl, "", OkexOrigin)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -54,12 +53,12 @@ func OkexWsConnect(symbolList []string) {
 
 	//统计连续错误次数
 	var readErrCount= 0
-	var msg= make([]byte, config.OkexBufferSize)
+	var msg= make([]byte, OkexBufferSize)
 
 	for {
-		if readErrCount > config.ZbErrorLimit {
+		if readErrCount > OKexErrLimit {
 			//异常退出
-			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+	log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
 		}
 		m, err := ws.Read(msg)
 		if err != nil {

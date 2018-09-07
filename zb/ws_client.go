@@ -1,7 +1,6 @@
 package zb
 
 import (
-	"ccxt/config"
 	"errors"
 	"golang.org/x/net/websocket"
 	"log"
@@ -30,7 +29,7 @@ func ZbWsConnect(symbolList []string) {
 		log.Println(errors.New("ZB订阅的交易对数量为空"))
 		return
 	}
-	ws, err := websocket.Dial(config.ZbWsUrl, "", config.ZbOrigi)
+	ws, err := websocket.Dial(ZbWsUrl, "", ZbOrigi)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -52,10 +51,10 @@ func ZbWsConnect(symbolList []string) {
 	//统计连续错误次数
 	var readErrCount = 0
 
-	var msg = make([]byte, config.ZbMsgBufferSize)
+	var msg = make([]byte, ZbMsgBufferSize)
 
 	for {
-		if readErrCount > config.ZbErrorLimit {
+		if readErrCount > ZbErrorLimit {
 			//异常退出
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
 		}

@@ -1,15 +1,17 @@
-package config
+package huobi
+
+import "ccxt/config"
 
 const (
 	//火币WS的最大EOF连接次数
-	HuoBiErroLimit = DEFAULT
+	HuoBiErroLimit = config.DEFAULT
 
 	HuoBiOrigin = "https://api.huobi.br.com/"
 	HuoBiWsUrl  = "wss://api.huobi.br.com/ws"
 
 	HuoBiSymbols	= "https://api.huobi.pro/v1/common/symbols"
 
-	HuoBiMsgBufferSize = DEFAULT_BUFFER_SIZE
+	HuoBiMsgBufferSize = config.DEFAULT_BUFFER_SIZE
 
 	//订阅的Generated ID
 	HuoBiGId = 1000

@@ -1,9 +1,11 @@
-package config
+package zb
+
+import "ccxt/config"
 
 const (
-	ZbErrorLimit = DEFAULT
+	ZbErrorLimit = config.DEFAULT
 
-	ZbMsgBufferSize = DEFAULT_BUFFER_SIZE * 10
+	ZbMsgBufferSize = config.DEFAULT_BUFFER_SIZE * 10
 
 	ZbSymbols = "http://api.zb.cn/data/v1/markets"
 

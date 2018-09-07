@@ -2,7 +2,6 @@ package huobi
 
 import (
 	"bytes"
-	"ccxt/config"
 	"compress/gzip"
 	"encoding/json"
 	"errors"
@@ -46,7 +45,7 @@ func HuobiWsConnect(symbolList []string) {
 		return
 	}
 
-	ws, err := websocket.Dial(config.HuoBiWsUrl, "", config.HuoBiOrigin)
+	ws, err := websocket.Dial(HuoBiWsUrl, "", HuoBiOrigin)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -54,7 +53,7 @@ func HuobiWsConnect(symbolList []string) {
 	}
 	//循环订阅交易对
 	for _, symbol := range symbolList {
-		sub := subModel{"market." + symbol + ".trade.detail", config.HuoBiGId}
+		sub := subModel{"market." + symbol + ".trade.detail", HuoBiGId}
 		message, err := json.Marshal(sub)
 		if err != nil {
 			log.Println(err.Error())
@@ -69,9 +68,9 @@ func HuobiWsConnect(symbolList []string) {
 	}
 	//统计连续错误次数
 	var readErrCount = 0
-	var msg = make([]byte, config.HuoBiMsgBufferSize)
+	var msg = make([]byte, HuoBiMsgBufferSize)
 	for {
-		if readErrCount > config.HuoBiErroLimit {
+		if readErrCount > HuoBiErroLimit {
 			//异常退出
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
 		}

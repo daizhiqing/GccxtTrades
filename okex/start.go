@@ -2,7 +2,6 @@ package okex
 
 import (
 	"ccxt/utils"
-	"ccxt/config"
 	"log"
 )
 
@@ -15,7 +14,7 @@ func StartWs(proxy string , useProxy bool)  {
 		}
 	}
 
-	okSymbols := utils.HttpGet(config.OkexSymbols).Get("data").MustArray()
+	okSymbols := utils.HttpGet(OkexSymbols).Get("data").MustArray()
 
 	var syList []string
 
