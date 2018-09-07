@@ -10,13 +10,13 @@ import (
 	"github.com/bitly/go-simplejson"
 )
 //是否使用代理
-const useProxy  = true
+var UseProxy = false
 //代理服务
-const proxyUrl  = "socks5://127.0.0.1:1086"
+var ProxyUrl = "socks5://127.0.0.1:1086"
 
 //设置代理
 func proxyReqClient() *http.Client{
-	proxy, _ := url.Parse(proxyUrl)
+	proxy, _ := url.Parse(ProxyUrl)
 	tr := &http.Transport{
 		Proxy:           http.ProxyURL(proxy),
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -42,13 +42,12 @@ func HttpGet(url string)(*simplejson.Json){
 	}
 	var resp *http.Response
 	var err error
-	if useProxy{
+	if UseProxy {
 		resp, err = proxyReqClient().Get(url)
 	}else{
 		resp, err = http.Get(url)
 	}
 	CheckErr(err)
-
 
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
