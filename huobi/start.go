@@ -7,9 +7,11 @@ import (
 
 func StartWs(proxy string, useProxy bool) {
 
-	if useProxy && proxy != "" {
+	if useProxy {
 		utils.UseProxy = useProxy
-		utils.ProxyUrl = proxy
+		if proxy != "" {
+			utils.ProxyUrl = proxy
+		}
 	}
 	//获取火币的所以交易对
 	huobiSymbols := utils.HttpGet(HuoBiSymbols).Get("data").MustArray()

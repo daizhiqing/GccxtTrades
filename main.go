@@ -1,14 +1,14 @@
 package main
 
 import (
-	"ccxt/lbank"
+	"ccxt/binance"
 	"runtime"
 	"time"
 )
 
 func main() {
 	runtime.GOMAXPROCS(4)
-	lbank.StartWs("", false)
+	binance.StartWs("", false)
 
 	for {
 		time.Sleep(time.Hour * 1)

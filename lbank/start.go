@@ -8,9 +8,11 @@ import (
 
 func StartWs(proxy string, useProxy bool) {
 
-	if useProxy && proxy != "" {
+	if useProxy {
 		utils.UseProxy = useProxy
-		utils.ProxyUrl = proxy
+		if proxy != "" {
+			utils.ProxyUrl = proxy
+		}
 	}
 
 	resp := utils.HttpRequest(LBankSymbole, "GET", map[string]string{"contentType": "application/x-www-form-urlencoded"})
