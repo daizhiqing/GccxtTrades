@@ -1,14 +1,14 @@
 package main
 
 import (
-	"ccxt/binance"
 	"runtime"
 	"time"
+	"ccxt/bitfinex"
 )
 
 func main() {
 	runtime.GOMAXPROCS(4)
-	binance.StartWs("", false)
+	bitfinex.StartWs("", false)
 
 	for {
 		time.Sleep(time.Hour * 1)
