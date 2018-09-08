@@ -9,7 +9,7 @@ const (
 	HuoBiOrigin = "https://api.huobi.br.com/"
 	HuoBiWsUrl  = "wss://api.huobi.br.com/ws"
 
-	HuoBiSymbols	= "https://api.huobi.pro/v1/common/symbols"
+	HuoBiSymbols = "https://api.huobi.pro/v1/common/symbols"
 
 	HuoBiMsgBufferSize = config.DEFAULT_BUFFER_SIZE
 

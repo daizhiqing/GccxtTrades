@@ -5,11 +5,11 @@ import (
 	"log"
 )
 
-func StartWs(proxy string , useProxy bool)  {
+func StartWs(proxy string, useProxy bool) {
 
 	if useProxy {
-		utils.UseProxy  = useProxy
-		if proxy != ""{
+		utils.UseProxy = useProxy
+		if proxy != "" {
 			utils.ProxyUrl = proxy
 		}
 	}
@@ -18,11 +18,11 @@ func StartWs(proxy string , useProxy bool)  {
 
 	var syList []string
 
-	for _,m := range okSymbols {
+	for _, m := range okSymbols {
 		str := m.(map[string]interface{})["symbol"].(string)
-		syList = append(syList , str)
+		syList = append(syList, str)
 	}
-	log.Println("okex:" , syList)
+	log.Println("okex:", syList)
 
 	go OkexWsConnect(syList)
 }
