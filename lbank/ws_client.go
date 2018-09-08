@@ -1,12 +1,29 @@
 package lbank
 
 import (
-	"log"
+	"encoding/json"
 	"errors"
 	"golang.org/x/net/websocket"
+	"log"
 	"strconv"
 	"strings"
 )
+
+type trade struct {
+	Volume    float32 `json:"volume"`
+	Price     float32 `json:"price"`
+	Amount    float32 `json:"amount"`
+	Direction string  `json:"direction"`
+	TS        string  `json:"TS"`
+}
+
+type TradeDetail struct {
+	Pair   string `json:"pair"`
+	Trade  trade  `json:"trade"`
+	Type   string `json:"type"`
+	SERVER string `json:"SERVER"`
+	TS     string `json:"TS"`
+}
 
 func LBankWsConnect(symbolList []string) {
 
@@ -21,10 +38,9 @@ func LBankWsConnect(symbolList []string) {
 		return
 	}
 
-
 	//循环订阅交易对
 	for _, symbol := range symbolList {
-		message := "{\"action\": \"subscribe\", \"subscribe\": \"trade\", \"pair\": \""+symbol+"\"}"
+		message := "{\"action\": \"subscribe\", \"subscribe\": \"trade\", \"pair\": \"" + symbol + "\"}"
 
 		_, err = ws.Write([]byte(message))
 		if err != nil {
@@ -51,10 +67,21 @@ func LBankWsConnect(symbolList []string) {
 		//连接正常重置
 		readErrCount = 0
 		revMsg := string(msg[:m])
-		log.Printf("LBank接收：%s \n",revMsg)
+		log.Printf("LBank接收：%s \n", revMsg)
 		if strings.Contains(revMsg, "ping") {
-			ws.Write([]byte(strings.Replace(revMsg, "ping", "pong", 1)))
+			var ping map[string]string
+			json.Unmarshal(msg[:m], &ping)
+			pongStr := "{\"action\": \"pong\", \"pong\": \"" + ping["ping"] + "\"}"
+			log.Println("ping消息回应", pongStr)
+			ws.Write([]byte(pongStr))
 			continue
 		}
+		var t TradeDetail
+		err = json.Unmarshal(msg[:m], &t)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		log.Println("Lbank输出对象", t)
 	}
 }
