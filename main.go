@@ -1,9 +1,9 @@
 package main
 
 import (
+	"ccxt/bitfinex"
 	"runtime"
 	"time"
-	"ccxt/bitfinex"
 )
 
 func main() {

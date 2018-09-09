@@ -2,12 +2,13 @@ package utils
 
 import (
 	"crypto/tls"
-	"github.com/bitly/go-simplejson"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/bitly/go-simplejson"
 )
 
 //是否使用代理

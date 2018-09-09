@@ -1,17 +1,19 @@
 package bitfinex
 
 import (
-	"log"
+	"encoding/json"
 	"errors"
-	"golang.org/x/net/websocket"
+	"log"
 	"strconv"
+
+	"golang.org/x/net/websocket"
 )
 
 type TradeDatial struct {
 	Symbole string
-	Ts int
-	Price float32
-	Amount float32
+	Ts      int
+	Price   float64
+	Amount  float64
 }
 
 func BitfinexWsConnect(symbolList []string) {
@@ -24,8 +26,8 @@ func BitfinexWsConnect(symbolList []string) {
 		log.Println(err.Error())
 		return
 	}
-	for _,s := range symbolList  {
-		subStr := "{\"event\": \"subscribe\", \"channel\": \"trades\", \"pair\":\""+s+"\" }"
+	for _, s := range symbolList {
+		subStr := "{\"event\": \"subscribe\", \"channel\": \"trades\", \"pair\":\"" + s + "\" }"
 
 		_, err = ws.Write([]byte(subStr))
 		if err != nil {
@@ -56,19 +58,26 @@ func BitfinexWsConnect(symbolList []string) {
 
 		log.Printf("Bitfinex接收：%s \n", msg[:m])
 
-		//var revData []interface{}
-		//err = json.Unmarshal(msg[:m] , revData)
-		//if err != nil {
-		//	log.Println(err)
-		//	continue
-		//}
-		//if revData[1] == "tu" {
-		//	t := TradeDatial{
-		//		revData[2].(string),
-		//		revData[4].(int),
-		//		revData[5].(float32),
-		//		revData[6].(float32)}
-		//	log.Println("Bitfinex输出对象：",t)
-		//}
+		var revData = make([]interface{}, 7)
+		err = json.Unmarshal(msg[:m], &revData)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		// revDataStr := string(msg[:m])
+		// revDataStr = strings.Replace(revDataStr , "[" ,-1)
+		// revDataStr = strings.Replace(revDataStr , "]" ,-1)
+		// revDataStr = strings.Replace(revDataStr , "]" ,-1)
+		// revDataStr = strings.Replace(revDataStr , "\"" ,-1)
+
+		// revData := strings.Split(revDataStr , ",")
+		if revData[1] == "tu" {
+			t := TradeDatial{
+				revData[2].(string),
+				int(revData[4].(float64)),
+				revData[5].(float64),
+				revData[6].(float64)}
+			log.Println("Bitfinex输出对象：", t)
+		}
 	}
 }

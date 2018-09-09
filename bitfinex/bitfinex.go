@@ -13,4 +13,3 @@ const (
 	BitfinexOrigin = "https://api.bitfinex.com"
 	BitfinexWsUrl  = "wss://api.bitfinex.com/ws"
 )
-

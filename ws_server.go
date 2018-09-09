@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"golang.org/x/net/websocket"
 	"log"
 	"net/http"
 	"runtime"
+
+	"golang.org/x/net/websocket"
 )
 
 func echoHandler(ws *websocket.Conn) {
