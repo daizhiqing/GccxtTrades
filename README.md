@@ -9,6 +9,7 @@
 * Okex :     wss://real.okex.com:10441/websocket
 * Bitfinex   wss://api.bitfinex.com/ws
 * Bitfinex   wss://api.bitfinex.com/ws
+* Gateio     wss://ws.gateio.io/v3/
 
 每个交易所根据不同包名分割，根目录下启动(部分交易所需要翻墙，建议海外或者香港服务器)
 ```bash
