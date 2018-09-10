@@ -45,7 +45,9 @@ func BitfinexWsConnect(symbolList []string) {
 	for {
 		if readErrCount > BitfinexErrorLimit {
 			//异常退出
+			ws.Close()
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+
 		}
 		m, err := ws.Read(msg)
 		if err != nil {

@@ -3,10 +3,11 @@ package binance
 import (
 	"encoding/json"
 	"errors"
-	"golang.org/x/net/websocket"
 	"log"
 	"strconv"
 	"strings"
+
+	"golang.org/x/net/websocket"
 )
 
 type data struct {
@@ -51,8 +52,9 @@ func BinanceWsConnect(symbolList []string) {
 	var msg = make([]byte, BinanceBufferSize)
 	for {
 		if readErrCount > BinanceErrorLimit {
-			//异常退出
+			ws.Close()
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+			break
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
@@ -74,4 +76,5 @@ func BinanceWsConnect(symbolList []string) {
 
 		log.Println("Binance输出对象：", t.Data.Buy, t.Data.M, t)
 	}
+
 }

@@ -3,10 +3,11 @@ package okex
 import (
 	"encoding/json"
 	"errors"
-	"golang.org/x/net/websocket"
 	"log"
 	"strconv"
 	"time"
+
+	"golang.org/x/net/websocket"
 )
 
 type tradeDetail struct {
@@ -59,6 +60,7 @@ func OkexWsConnect(symbolList []string) {
 		if readErrCount > OKexErrLimit {
 			//异常退出
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+			ws.Close()
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
@@ -95,5 +97,5 @@ func OkexWsConnect(symbolList []string) {
 			tradeDetail[0].Data[0][4]}
 		log.Println("Okex输出对象：", transData)
 	}
-	ws.Close() //关闭连接
+
 }

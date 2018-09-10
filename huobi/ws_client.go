@@ -5,12 +5,13 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"errors"
-	"golang.org/x/net/websocket"
 	"io/ioutil"
 	"log"
 	"math/big"
 	"strconv"
 	"strings"
+
+	"golang.org/x/net/websocket"
 )
 
 type subModel struct {
@@ -72,7 +73,9 @@ func HuobiWsConnect(symbolList []string) {
 	for {
 		if readErrCount > HuoBiErroLimit {
 			//异常退出
+			ws.Close()
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+			break
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
@@ -111,5 +114,5 @@ func HuobiWsConnect(symbolList []string) {
 			log.Println("Huobi输出对象：", tradeDetail)
 		}
 	}
-	ws.Close() //关闭连接
+
 }

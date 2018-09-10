@@ -38,7 +38,7 @@ func echoHandler(ws *websocket.Conn) {
 
 }
 
-func main() {
+func mainBak() {
 	runtime.GOMAXPROCS(4)
 	http.Handle("/echo", websocket.Handler(echoHandler))
 	http.Handle("/", http.FileServer(http.Dir(".")))

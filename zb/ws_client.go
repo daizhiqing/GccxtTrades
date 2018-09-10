@@ -3,9 +3,10 @@ package zb
 import (
 	"encoding/json"
 	"errors"
-	"golang.org/x/net/websocket"
 	"log"
 	"strconv"
+
+	"golang.org/x/net/websocket"
 )
 
 type detail struct {
@@ -56,7 +57,9 @@ func ZbWsConnect(symbolList []string) {
 	for {
 		if readErrCount > ZbErrorLimit {
 			//异常退出
+			ws.Close() //关闭连接
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
@@ -77,5 +80,4 @@ func ZbWsConnect(symbolList []string) {
 			log.Println("Zb输出对象：", tradeDetail)
 		}
 	}
-	ws.Close() //关闭连接
 }
