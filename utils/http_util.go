@@ -73,9 +73,9 @@ func HttpRequest(webUrl string, method string, headers map[string]string) string
 	}
 	//request.Header.Set("Connection", "keep-alive")
 	//request.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36")
-	proxy, _ := url.Parse(ProxyUrl)
+	// proxy, _ := url.Parse(ProxyUrl)
 	tr := &http.Transport{
-		Proxy:           http.ProxyURL(proxy),
+		// Proxy:           http.ProxyURL(proxy),
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{
