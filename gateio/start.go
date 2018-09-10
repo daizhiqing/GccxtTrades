@@ -22,10 +22,5 @@ func StartWs(proxy string, useProxy bool) {
 	for _, m := range resp {
 		symboleList = append(symboleList, m.(string))
 	}
-	log.Info("这是一个INFO")
-	log.Debug("这是一个DEBUG")
-
-	log.Warn("这是一个WARN")
-	log.Error("这是一个ERROR")
-
+	GateioWsConnect(symboleList)
 }
