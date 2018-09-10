@@ -4,7 +4,18 @@ import (
 	"ccxt/gateio"
 	"runtime"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
+
+func init() {
+	customFormatter := new(logrus.TextFormatter)
+	customFormatter.TimestampFormat = "2006-01-02 15:04:05"
+	logrus.SetFormatter(customFormatter)
+	customFormatter.FullTimestamp = true
+
+	// log.SetFormatter(&log.JSONFormatter{})
+}
 
 func main() {
 	runtime.GOMAXPROCS(4)

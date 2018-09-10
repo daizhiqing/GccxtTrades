@@ -3,7 +3,9 @@ package zb
 import (
 	"encoding/json"
 	"errors"
-	"log"
+
+	log "github.com/sirupsen/logrus"
+
 	"strconv"
 
 	"golang.org/x/net/websocket"

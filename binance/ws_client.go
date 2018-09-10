@@ -3,7 +3,9 @@ package binance
 import (
 	"encoding/json"
 	"errors"
-	"log"
+
+	log "github.com/sirupsen/logrus"
+
 	"strconv"
 	"strings"
 

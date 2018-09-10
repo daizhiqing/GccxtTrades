@@ -3,7 +3,8 @@ package lbank
 import (
 	"ccxt/utils"
 	"encoding/json"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func StartWs(proxy string, useProxy bool) {

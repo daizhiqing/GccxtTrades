@@ -2,7 +2,8 @@ package bitfinex
 
 import (
 	"ccxt/utils"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func StartWs(proxy string, useProxy bool) {
@@ -13,13 +14,13 @@ func StartWs(proxy string, useProxy bool) {
 		}
 	}
 
-	resp , err := utils.HttpGet(BitfinexSymbole).Array()
+	resp, err := utils.HttpGet(BitfinexSymbole).Array()
 	if err != nil {
 		log.Panic(err)
 	}
 	var symboleList []string
-	for _,m := range  resp {
-		symboleList = append(symboleList , m.(string))
+	for _, m := range resp {
+		symboleList = append(symboleList, m.(string))
 	}
 	log.Println(symboleList)
 

@@ -2,7 +2,8 @@ package huobi
 
 import (
 	"ccxt/utils"
-	"log"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func StartWs(proxy string, useProxy bool) {

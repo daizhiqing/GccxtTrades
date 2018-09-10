@@ -3,10 +3,13 @@ package lbank
 import (
 	"encoding/json"
 	"errors"
-	"golang.org/x/net/websocket"
-	"log"
+
+	log "github.com/sirupsen/logrus"
+
 	"strconv"
 	"strings"
+
+	"golang.org/x/net/websocket"
 )
 
 type trade struct {
@@ -55,6 +58,7 @@ func LBankWsConnect(symbolList []string) {
 	var msg = make([]byte, LBankBufferSzie)
 	for {
 		if readErrCount > LBankErrorLimit {
+			ws.Close()
 			//异常退出
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
 		}

@@ -3,10 +3,11 @@ package utils
 import (
 	"crypto/tls"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/bitly/go-simplejson"
 )

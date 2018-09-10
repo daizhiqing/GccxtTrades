@@ -2,7 +2,9 @@ package zb
 
 import (
 	"ccxt/utils"
-	"log"
+
+	log "github.com/sirupsen/logrus"
+
 	"strings"
 )
 
