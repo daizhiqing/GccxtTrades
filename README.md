@@ -3,13 +3,15 @@
 
 目前已经对接交易所(持续更新。。。):
 
-* HuobiPro： wss://api.huobi.br.com/ws
-* LBank：    wss://api.lbkex.com/ws/V2/
-* ZB :       wss://api.zb.cn:9999/websocket
-* Okex :     wss://real.okex.com:10441/websocket
-* Bitfinex   wss://api.bitfinex.com/ws
-* Bitfinex   wss://api.bitfinex.com/ws
-* Gateio     wss://ws.gateio.io/v3/
+* HuobiPro :  wss://api.huobi.br.com/ws
+* LBank    :  wss://api.lbkex.com/ws/V2/
+* ZB       :  wss://api.zb.cn:9999/websocket
+* Okex     :  wss://real.okex.com:10441/websocket
+* Bitfinex :  wss://api.bitfinex.com/ws
+* Binance  :  wss://stream.binance.com:9443/stream
+* Gateio   :  wss://ws.gateio.io/v3/
+* FCoin    :  wss://api.fcoin.com/v2/ws"
+* Hitbtc   :  wss://api.hitbtc.com/api/2/ws"
 
 每个交易所根据不同包名分割，根目录下启动(部分交易所需要翻墙，建议海外或者香港服务器)
 ```bash
