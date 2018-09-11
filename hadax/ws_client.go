@@ -1,4 +1,4 @@
-package huobi
+package hadax
 
 import (
 	"bytes"
@@ -6,9 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-
-	log "github.com/sirupsen/logrus"
-
+	"log"
 	"strconv"
 	"strings"
 
@@ -21,7 +19,7 @@ type subModel struct {
 }
 
 type trade struct {
-	// Id        big.Int `json:"id"`
+	// Id        int64   `json:"id"`
 	Price     float32 `json:"price"`
 	Direction string  `json:"direction"`
 	Amount    float32 `json:"amount"`
@@ -40,14 +38,14 @@ type TradeDetail struct {
 	Tick tick   `json:"tick"`
 }
 
-func HuobiWsConnect(symbolList []string) {
+func HadaxWsConnect(symbolList []string) {
 
 	if len(symbolList) <= 0 {
-		log.Println(errors.New("火币订阅的交易对数量为空"))
+		log.Println(errors.New("Hadax订阅的交易对数量为空"))
 		return
 	}
 
-	ws, err := websocket.Dial(HuoBiWsUrl, "", HuoBiOrigin)
+	ws, err := websocket.Dial(HadaxWsUrl, "", HadaxWsUrl)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -55,7 +53,7 @@ func HuobiWsConnect(symbolList []string) {
 	}
 	//循环订阅交易对
 	for _, symbol := range symbolList {
-		sub := subModel{"market." + symbol + ".trade.detail", HuoBiGId}
+		sub := subModel{"market." + symbol + ".trade.detail", 1001}
 		message, err := json.Marshal(sub)
 		if err != nil {
 			log.Println(err.Error())
@@ -70,9 +68,9 @@ func HuobiWsConnect(symbolList []string) {
 	}
 	//统计连续错误次数
 	var readErrCount = 0
-	var msg = make([]byte, HuoBiMsgBufferSize)
+	var msg = make([]byte, HadaxBufferSize)
 	for {
-		if readErrCount > HuoBiErroLimit {
+		if readErrCount > HadaxErrorLimit {
 			//异常退出
 			ws.Close()
 			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
@@ -101,7 +99,7 @@ func HuobiWsConnect(symbolList []string) {
 		if strings.Contains(revMsg, "ping") {
 			ws.Write([]byte(strings.Replace(revMsg, "ping", "pong", 1)))
 		}
-		log.Println("Huobi接收：", revMsg)
+		log.Println("Hadax接收：", revMsg)
 		var tradeDetail TradeDetail
 		err = json.Unmarshal(b, &tradeDetail)
 		if err != nil {
@@ -112,7 +110,7 @@ func HuobiWsConnect(symbolList []string) {
 		//temp ,_ :=json.Marshal(tradeDetail)
 		if tradeDetail.Ch != "" {
 			//log.Println("转化：", string(temp))
-			log.Println("Huobi输出对象：", tradeDetail)
+			log.Println("Hadax输出对象：", tradeDetail)
 		}
 	}
 

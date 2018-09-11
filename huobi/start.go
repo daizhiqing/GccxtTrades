@@ -18,8 +18,8 @@ func StartWs(proxy string, useProxy bool) {
 	huobiSymbols := utils.HttpGet(HuoBiSymbols).Get("data").MustArray()
 	var syList []string
 	for _, m := range huobiSymbols {
-		str := m.(map[string]interface{})["base-currency"].(string) + m.(map[string]interface{})["quote-currency"].(string)
-		syList = append(syList, str)
+		// str := m.(map[string]interface{})["symbol"].(string)
+		syList = append(syList, m.(map[string]interface{})["symbol"].(string))
 	}
 	log.Println("huobi:", syList)
 
