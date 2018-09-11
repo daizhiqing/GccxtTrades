@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ccxt/hitbtc"
+	"ccxt/fcoin"
 	"runtime"
 	"time"
 
@@ -28,7 +28,8 @@ func main() {
 	// binance.StartWs("", false)
 	// zb.StartWs("", false)
 	// gateio.StartWs("", false)
-	hitbtc.StartWs("", false)
+	// hitbtc.StartWs("", false)
+	fcoin.StartWs("", false)
 
 	for {
 		time.Sleep(time.Hour * 1)
