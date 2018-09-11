@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ccxt/hadax"
+	"ccxt/utils"
 	"runtime"
 	"time"
 
@@ -30,9 +30,17 @@ func main() {
 	// gateio.StartWs("", false)
 	// hitbtc.StartWs("", false)
 	// fcoin.StartWs("", false)
-	hadax.StartWs("", false)
+	// hadax.StartWs("", false)
+	go func() {
+		for {
+			utils.SendMsg("test_go", "atest_1", []byte("go-1:"+time.Now().String()))
+			// time.Sleep(time.Second * 1)
+		}
+	}()
 
-	for {
-		time.Sleep(time.Hour * 1)
-	}
+	go utils.ReceiveMsg("daizhiqing", "atest_1", func(b []byte) {
+		logrus.Errorf("》》》》》》消费atest_1消息：%s", b)
+	})
+	loop := make(chan bool)
+	<-loop
 }
