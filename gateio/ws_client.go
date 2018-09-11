@@ -43,7 +43,7 @@ func GateioWsConnect(sysList []string) {
 		logrus.Error(err.Error())
 		return
 	}
-	subModel := subModel{12312, "trades.subscribe", []string{"BTC_USDT", "EOS_USDT", "EOS_BTC"}}
+	subModel := subModel{12312, "trades.subscribe", sysList}
 	subData, err := json.Marshal(subModel)
 	if err != nil {
 		logrus.Panic("Gateio订阅JSON转换失败")
