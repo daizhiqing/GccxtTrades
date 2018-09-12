@@ -6,6 +6,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
+	"ccxt/config"
+	"ccxt/model"
+	"ccxt/utils"
 	"strconv"
 	"strings"
 
@@ -77,6 +80,13 @@ func BinanceWsConnect(symbolList []string) {
 		}
 
 		log.Println("Binance输出对象：", t.Data.Buy, t.Data.M, t)
+
+		go DataParser(t)
+		go func() {
+			data := <-model.DataChannel
+			queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+			utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+		}()
 	}
 
 }

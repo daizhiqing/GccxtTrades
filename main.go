@@ -1,9 +1,8 @@
 package main
 
 import (
-	"ccxt/utils"
+	"ccxt/binance"
 	"runtime"
-	"time"
 
 	"github.com/sirupsen/logrus"
 )
@@ -25,22 +24,22 @@ func main() {
 	// huobi.StartWs("", false)
 	// lbank.StartWs("", false)
 	// okex.StartWs("", false)
-	// binance.StartWs("", false)
+	binance.StartWs("", false)
 	// zb.StartWs("", false)
 	// gateio.StartWs("", false)
 	// hitbtc.StartWs("", false)
 	// fcoin.StartWs("", false)
 	// hadax.StartWs("", false)
-	go func() {
-		for {
-			utils.SendMsg("test_go", "atest_1", []byte("go-1:"+time.Now().String()))
-			// time.Sleep(time.Second * 1)
-		}
-	}()
+	// go func() {
+	// 	for {
+	// 		utils.SendMsg("ex-api-mq", "trades_binance_btc", []byte("go-1:"+time.Now().String()))
+	// 		// time.Sleep(time.Second * 1)
+	// 	}
+	// }()
 
-	go utils.ReceiveMsg("daizhiqing", "atest_1", func(b []byte) {
-		logrus.Errorf("》》》》》》消费atest_1消息：%s", b)
-	})
+	// go utils.ReceiveMsg("goDzq", "trades_binance_btc", func(b []byte) {
+	// 	logrus.Errorf("trades_binance_btc : %s", b)
+	// })
 	loop := make(chan bool)
 	<-loop
 }

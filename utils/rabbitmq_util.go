@@ -24,7 +24,7 @@ func SendMsg(exchange, queue string, body []byte) {
 	defer ch.Close()
 	q, err := ch.QueueDeclare(
 		queue, // name
-		false, // durable
+		true, // durable
 		false, // delete when unused
 		false, // exclusive
 		false, // no-wait
@@ -53,7 +53,7 @@ func ReceiveMsg(consumer, queue string, f func([]byte)) {
 	defer ch.Close()
 	q, err := ch.QueueDeclare(
 		queue, // name
-		false, // durable
+		true,  // durable
 		false, // delete when unused
 		false, // exclusive
 		false, // no-wait
