@@ -9,12 +9,12 @@ import (
 )
 
 //格式化为统一的输出结构
-func DataParser(t TradeDatail) {
+func DataParser(t TradeDatail, id int) {
 
 	var commonData = model.TradeTransData{}
 
-	commonData.Exchange = "aizhiqing"
-	commonData.ExchangeId = 1
+	commonData.Exchange = Name
+	commonData.ExchangeId = id
 
 	var trades []model.TradeEntity
 	var trade model.TradeEntity

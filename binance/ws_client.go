@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/sirupsen/logrus"
+
 	log "github.com/sirupsen/logrus"
 
 	"ccxt/config"
@@ -44,6 +46,12 @@ func BinanceWsConnect(symbolList []string) {
 	for _, s := range symbolList {
 		subUrl += strings.ToLower(s) + "@aggTrade/"
 	}
+	id := config.GetExchangeId(Name)
+
+	if id <= 0 {
+		log.Println(errors.New(Name + "未找到交易ID"))
+		return
+	}
 
 	ws, err := websocket.Dial(BinanceWsUrl+subUrl, "", BinanceOrigin)
 	log.Printf("订阅: %s \n", subUrl)
@@ -70,7 +78,7 @@ func BinanceWsConnect(symbolList []string) {
 		//连接正常重置
 		readErrCount = 0
 
-		log.Printf("Binance接收：%s \n", msg[:m])
+		// log.Printf("Binance接收：%s \n", msg[:m])
 
 		var t TradeDatail
 		err = json.Unmarshal(msg[:m], &t)
@@ -79,13 +87,17 @@ func BinanceWsConnect(symbolList []string) {
 			continue
 		}
 
-		log.Println("Binance输出对象：", t.Data.Buy, t.Data.M, t)
+		// log.Println("Binance输出对象：", t.Data.Buy, t.Data.M, t)
 
-		go DataParser(t)
+		go DataParser(t, id)
 		go func() {
-			data := <-model.DataChannel
-			queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
-			utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+			select {
+			case data := <-model.DataChannel:
+				queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+				utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+			default:
+				logrus.Warn("Binance无消息发送")
+			}
 		}()
 	}
 

@@ -3,6 +3,8 @@ package binance
 import "ccxt/config"
 
 const (
+	Name = "binance"
+
 	BinanceErrorLimit = config.DEFAULT
 
 	BinanceBufferSize = config.DEFAULT_BUFFER_SIZE
