@@ -1,8 +1,14 @@
 package gateio
 
 import (
+	"ccxt/config"
+	"ccxt/model"
+	"ccxt/utils"
 	"encoding/json"
+	"errors"
+	"log"
 	"strconv"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/websocket"
@@ -38,6 +44,11 @@ func GateioWsConnect(sysList []string) {
 		logrus.Error("Gateio订阅的交易对数量为空")
 		return
 	}
+	id := config.GetExchangeId(Name)
+	if id <= 0 {
+		log.Println(errors.New(Name + "未找到交易所ID"))
+		return
+	}
 	ws, err := websocket.Dial(GateioWsUrl, "", GateioWsUrl)
 	if err != nil {
 		logrus.Error(err.Error())
@@ -57,24 +68,32 @@ func GateioWsConnect(sysList []string) {
 	var msg = make([]byte, GateioBufferSize)
 
 	for {
-		if readErrCount > GeteioErrorLimit {
-			//异常退出
-			ws.Close()
-			logrus.Panic(("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+		var data string
+		for {
+			if readErrCount > GeteioErrorLimit {
+				//异常退出
+				ws.Close()
+				logrus.Panic(("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
 
+			}
+			m, err := ws.Read(msg)
+			if err != nil {
+				logrus.Info(err.Error())
+				readErrCount++
+				continue
+			}
+			data += string(msg[:m])
+			if m <= (GateioBufferSize-1) && strings.HasSuffix(data, "}") {
+				break
+			}
 		}
-		m, err := ws.Read(msg)
-		if err != nil {
-			logrus.Info(err.Error())
-			readErrCount++
-			continue
-		}
+
 		//连接正常重置
 		readErrCount = 0
 
-		logrus.Infof("Gateio接收：%s \n", msg[:m])
+		logrus.Infof("Gateio接收：%s \n", data)
 		var t tradeData
-		err = json.Unmarshal(msg[:m], &t)
+		err = json.Unmarshal([]byte(data), &t)
 		if err != nil {
 			logrus.Error(err)
 			continue
@@ -98,7 +117,19 @@ func GateioWsConnect(sysList []string) {
 				tradeDetial.tradeList = append(tradeDetial.tradeList, tradeEntry)
 			}
 
-			logrus.Info("Gateio对象输出", tradeDetial)
+			// logrus.Info("Gateio对象输出", tradeDetial)
+
+			go DataParser(tradeDetial, id)
+			go func() {
+				select {
+				case data := <-model.DataChannel:
+					log.Println("获取消息:", data.Symbol, data)
+					queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+					utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+				default:
+					logrus.Warn(Name + "无消息发送")
+				}
+			}()
 		}
 	}
 }
