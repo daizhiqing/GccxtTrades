@@ -1,8 +1,12 @@
 package bitfinex
 
 import (
+	"ccxt/config"
+	"ccxt/model"
+	"ccxt/utils"
 	"encoding/json"
 	"errors"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 
@@ -11,7 +15,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-type TradeDatial struct {
+type TradeDetail struct {
 	Symbole string
 	Ts      int
 	Price   float64
@@ -21,6 +25,12 @@ type TradeDatial struct {
 func BitfinexWsConnect(symbolList []string) {
 	if len(symbolList) <= 0 {
 		log.Println(errors.New("Binance订阅的交易对数量为空"))
+		return
+	}
+	id := config.GetExchangeId(Name)
+
+	if id <= 0 {
+		log.Println(errors.New(Name + "未找到交易所ID"))
 		return
 	}
 	ws, err := websocket.Dial(BitfinexWsUrl, "", BitfinexOrigin)
@@ -60,7 +70,7 @@ func BitfinexWsConnect(symbolList []string) {
 		//连接正常重置
 		readErrCount = 0
 
-		log.Printf("Bitfinex接收：%s \n", msg[:m])
+		// log.Printf("Bitfinex接收：%s \n", msg[:m])
 
 		var revData = make([]interface{}, 7)
 		err = json.Unmarshal(msg[:m], &revData)
@@ -75,13 +85,27 @@ func BitfinexWsConnect(symbolList []string) {
 		// revDataStr = strings.Replace(revDataStr , "\"" ,-1)
 
 		// revData := strings.Split(revDataStr , ",")
+		var t = TradeDetail{}
 		if revData[1] == "tu" {
-			t := TradeDatial{
+			t = TradeDetail{
 				revData[2].(string),
 				int(revData[4].(float64)),
 				revData[5].(float64),
 				revData[6].(float64)}
-			log.Println("Bitfinex输出对象：", t)
+			// log.Println("Bitfinex输出对象：", t)
+
+			go DataParser(t, id)
+			go func() {
+				select {
+				case data := <-model.DataChannel:
+					log.Println("获取消息:", data.Symbol, data)
+					queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+					utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+				default:
+					log.Warn(Name + "无消息发送")
+				}
+			}()
 		}
+
 	}
 }

@@ -18,6 +18,14 @@ func init() {
 }
 
 func main() {
+
+	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
+		if err := recover(); err != nil {
+			logrus.Error(err) // 这里的err其实就是panic传入的内容
+		}
+		logrus.Error("程序进程退出")
+	}()
+
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// bitfinex.StartWs("", false)

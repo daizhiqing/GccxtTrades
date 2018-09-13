@@ -22,6 +22,8 @@ const (
 	SYMBOL_KCS  = "KCS"
 	SYMBOL_NEO  = "NEO"
 	SYMBOL_CNY  = "CNY"
+	SYMBOL_GBP  = "GBP" //英镑
+	SYMBOL_JPY  = "JPY" //日元
 )
 
 func FmtSymbol(s string) (string, string) {
@@ -29,7 +31,6 @@ func FmtSymbol(s string) (string, string) {
 		return "", ""
 	}
 	s = strings.Replace(s, "_", "", -1)
-	s = strings.Replace(s, "-", "", -1)
 	s = strings.Replace(s, "/", "", -1)
 	upStr := strings.ToUpper(s)
 
@@ -64,6 +65,10 @@ func FmtSymbol(s string) (string, string) {
 		suffix = SYMBOL_KCS
 	} else if strings.HasSuffix(upStr, SYMBOL_NEO) {
 		suffix = SYMBOL_NEO
+	} else if strings.HasSuffix(upStr, SYMBOL_JPY) {
+		suffix = SYMBOL_JPY
+	} else if strings.HasSuffix(upStr, SYMBOL_GBP) {
+		suffix = SYMBOL_GBP
 	} else {
 		logrus.Errorln("未标记的交易对：" + s)
 		return "", ""

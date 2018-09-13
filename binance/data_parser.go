@@ -9,7 +9,7 @@ import (
 )
 
 //格式化为统一的输出结构
-func DataParser(t TradeDatail, id int) {
+func DataParser(t TradeDetail, id int) {
 
 	var commonData = model.TradeTransData{}
 
@@ -33,7 +33,7 @@ func DataParser(t TradeDatail, id int) {
 
 		commonData.Symbol = a + "/" + b
 		commonData.Trades = trades
+		logrus.Infof("输出MQ消息:%s", commonData.ToBody())
+		model.DataChannel <- commonData
 	}
-	logrus.Infof("输出MQ消息:%s", commonData.ToBody())
-	model.DataChannel <- commonData
 }

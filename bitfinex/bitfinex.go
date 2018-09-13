@@ -3,6 +3,8 @@ package bitfinex
 import "ccxt/config"
 
 const (
+	Name = "bitfinex"
+
 	BitfinexErrorLimit = config.DEFAULT
 
 	BitfinexBufferSize = config.DEFAULT_BUFFER_SIZE

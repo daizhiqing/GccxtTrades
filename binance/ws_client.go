@@ -31,7 +31,7 @@ type data struct {
 	M         bool   `json:"M"`
 }
 
-type TradeDatail struct {
+type TradeDetail struct {
 	Stream string `json:"stream"`
 	Data   data   `json:"data"`
 }
@@ -80,7 +80,7 @@ func BinanceWsConnect(symbolList []string) {
 
 		// log.Printf("Binance接收：%s \n", msg[:m])
 
-		var t TradeDatail
+		var t TradeDetail
 		err = json.Unmarshal(msg[:m], &t)
 		if err != nil {
 			log.Println(err)
