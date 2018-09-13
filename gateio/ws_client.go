@@ -49,19 +49,10 @@ func GateioWsConnect(sysList []string) {
 		log.Println(errors.New(Name + "未找到交易所ID"))
 		return
 	}
-	ws, err := websocket.Dial(GateioWsUrl, "", GateioWsUrl)
-	if err != nil {
-		logrus.Error(err.Error())
-		return
+	ws := subWs(sysList)
+	if ws == nil {
+		logrus.Panic("WS连接失败")
 	}
-	subModel := subModel{12312, "trades.subscribe", sysList}
-	subData, err := json.Marshal(subModel)
-	if err != nil {
-		logrus.Panic("Gateio订阅JSON转换失败")
-	}
-	logrus.Infof("订阅 %s", subData)
-	ws.Write(subData)
-
 	//统计连续错误次数
 	var readErrCount = 0
 
@@ -93,7 +84,7 @@ func GateioWsConnect(sysList []string) {
 
 		logrus.Infof("Gateio接收：%s \n", data)
 		var t tradeData
-		err = json.Unmarshal([]byte(data), &t)
+		err := json.Unmarshal([]byte(data), &t)
 		if err != nil {
 			logrus.Error(err)
 			continue
@@ -132,4 +123,21 @@ func GateioWsConnect(sysList []string) {
 			}()
 		}
 	}
+}
+
+func subWs(sysList []string) *websocket.Conn {
+	ws, err := websocket.Dial(GateioWsUrl, "", GateioWsUrl)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil
+	}
+	subModel := subModel{12312, "trades.subscribe", sysList}
+	subData, err := json.Marshal(subModel)
+	if err != nil {
+		logrus.Panic("Gateio订阅JSON转换失败")
+		return nil
+	}
+	logrus.Infof("订阅 %s", subData)
+	ws.Write(subData)
+	return ws
 }

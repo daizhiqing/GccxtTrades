@@ -53,26 +53,9 @@ func HadaxWsConnect(symbolList []string) {
 		log.Println(errors.New(Name + "未找到交易所ID"))
 		return
 	}
-	ws, err := websocket.Dial(HadaxWsUrl, "", HadaxWsUrl)
-
-	if err != nil {
-		log.Println(err.Error())
-		return
-	}
-	//循环订阅交易对
-	for _, symbol := range symbolList {
-		sub := subModel{"market." + symbol + ".trade.detail", 1001}
-		message, err := json.Marshal(sub)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		_, err = ws.Write(message)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		log.Printf("订阅: %s \n", message)
+	ws := subWs(symbolList)
+	if ws == nil {
+		logrus.Panic("WS连接失败")
 	}
 	//统计连续错误次数
 	var readErrCount = 0
@@ -81,8 +64,8 @@ func HadaxWsConnect(symbolList []string) {
 		if readErrCount > HadaxErrorLimit {
 			//异常退出
 			ws.Close()
-			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
-			break
+			logrus.Error("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount))
+			ws = subWs(symbolList)
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
@@ -134,4 +117,29 @@ func HadaxWsConnect(symbolList []string) {
 		}
 	}
 
+}
+
+func subWs(symbolList []string) *websocket.Conn {
+	ws, err := websocket.Dial(HadaxWsUrl, "", HadaxWsUrl)
+
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+	//循环订阅交易对
+	for _, symbol := range symbolList {
+		sub := subModel{"market." + symbol + ".trade.detail", 1001}
+		message, err := json.Marshal(sub)
+		if err != nil {
+			log.Println(err.Error())
+			return nil
+		}
+		_, err = ws.Write(message)
+		if err != nil {
+			log.Println(err.Error())
+			return nil
+		}
+		log.Printf("订阅: %s \n", message)
+	}
+	return ws
 }

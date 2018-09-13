@@ -6,7 +6,6 @@ import (
 )
 
 var conn *amqp.Connection
-
 var AmqpUrl = "amqp://user:pwd@host:port/vhost"
 
 func init() {
@@ -19,12 +18,20 @@ func init() {
 
 //发送消息到
 func SendMsg(exchange, queue string, body []byte) {
+	defer func() { // 必须要先声明defer，否则不能捕获到panic异常
+		if err := recover(); err != nil {
+			logrus.Error(err) // 这里的err其实就是panic传入的内容
+		}
+	}()
+	var err error
+
 	ch, err := conn.Channel()
 	if err != nil {
 		logrus.Error(err)
 		logrus.Errorf("连接失败 %s", body)
 		return
 	}
+
 	defer ch.Close()
 	q, err := ch.QueueDeclare(
 		queue, // name
@@ -52,12 +59,14 @@ func SendMsg(exchange, queue string, body []byte) {
 
 //该方法会造成阻塞，协程调用
 func ReceiveMsg(consumer, queue string, f func([]byte)) {
+
 	ch, err := conn.Channel()
 	if err != nil {
 		logrus.Error(err)
-		logrus.Error("消费失败监听失败")
+		logrus.Errorf("连接失败 %s", consumer, queue)
 		return
 	}
+
 	CheckErr(err)
 	defer ch.Close()
 	q, err := ch.QueueDeclare(

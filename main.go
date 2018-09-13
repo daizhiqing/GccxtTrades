@@ -1,10 +1,10 @@
 package main
 
 import (
-	"ccxt/gateio"
 	"runtime"
 
 	"github.com/sirupsen/logrus"
+	"ccxt/hitbtc"
 )
 
 //初始化日志输出格式
@@ -28,16 +28,16 @@ func main() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	// bitfinex.StartWs("", false)
-	// huobi.StartWs("", false)
+	//bitfinex.StartWs("", false)
+	//huobi.StartWs("", false)
 	// lbank.StartWs("", false)
 	// okex.StartWs("", false)
-	// binance.StartWs("", false)
+	//binance.StartWs("", false)
 	// zb.StartWs("", false)
-	gateio.StartWs("", false)
-	// hitbtc.StartWs("", false)
-	// fcoin.StartWs("", false)
-	// hadax.StartWs("", false)
+	// gateio.StartWs("", false)
+	hitbtc.StartWs("", false)
+	//fcoin.StartWs("", false)
+	//hadax.StartWs("", false)
 	// go func() {
 	// 	for {
 	// 		utils.SendMsg("ex-api-mq", "trades_binance_btc", []byte("go-1:"+time.Now().String()))

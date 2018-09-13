@@ -9,10 +9,9 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/websocket"
 
 	"strconv"
-
-	"golang.org/x/net/websocket"
 )
 
 type TradeDetail struct {
@@ -33,22 +32,10 @@ func BitfinexWsConnect(symbolList []string) {
 		log.Println(errors.New(Name + "未找到交易所ID"))
 		return
 	}
-	ws, err := websocket.Dial(BitfinexWsUrl, "", BitfinexOrigin)
-	if err != nil {
-		log.Println(err.Error())
-		return
+	ws := subWs(symbolList)
+	if ws == nil {
+		log.Panic("WS连接失败")
 	}
-	for _, s := range symbolList {
-		subStr := "{\"event\": \"subscribe\", \"channel\": \"trades\", \"pair\":\"" + s + "\" }"
-
-		_, err = ws.Write([]byte(subStr))
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		log.Printf("订阅: %s \n", subStr)
-	}
-
 	//统计连续错误次数
 	var readErrCount = 0
 
@@ -58,8 +45,8 @@ func BitfinexWsConnect(symbolList []string) {
 		if readErrCount > BitfinexErrorLimit {
 			//异常退出
 			ws.Close()
-			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
-
+			log.Error(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+			ws = subWs(symbolList)
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
@@ -108,4 +95,23 @@ func BitfinexWsConnect(symbolList []string) {
 		}
 
 	}
+}
+
+func subWs(symbolList []string) *websocket.Conn {
+	ws, err := websocket.Dial(BitfinexWsUrl, "", BitfinexOrigin)
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+	for _, s := range symbolList {
+		subStr := "{\"event\": \"subscribe\", \"channel\": \"trades\", \"pair\":\"" + s + "\" }"
+
+		_, err = ws.Write([]byte(subStr))
+		if err != nil {
+			log.Println(err.Error())
+			return nil
+		}
+		log.Printf("订阅: %s \n", subStr)
+	}
+	return ws
 }

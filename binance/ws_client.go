@@ -41,11 +41,6 @@ func BinanceWsConnect(symbolList []string) {
 		log.Println(errors.New("Binance订阅的交易对数量为空"))
 		return
 	}
-
-	var subUrl string
-	for _, s := range symbolList {
-		subUrl += strings.ToLower(s) + "@aggTrade/"
-	}
 	id := config.GetExchangeId(Name)
 
 	if id <= 0 {
@@ -53,21 +48,18 @@ func BinanceWsConnect(symbolList []string) {
 		return
 	}
 
-	ws, err := websocket.Dial(BinanceWsUrl+subUrl, "", BinanceOrigin)
-	log.Printf("订阅: %s \n", subUrl)
-	if err != nil {
-		log.Println(err.Error())
-		return
+	ws := subWs(symbolList)
+	if ws == nil {
+		logrus.Panic("WS连接失败")
 	}
-
 	//统计连续错误次数
 	var readErrCount = 0
 	var msg = make([]byte, BinanceBufferSize)
 	for {
 		if readErrCount > BinanceErrorLimit {
 			ws.Close()
-			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
-			break
+			log.Error(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+			ws = subWs(symbolList)
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
@@ -101,4 +93,18 @@ func BinanceWsConnect(symbolList []string) {
 		}()
 	}
 
+}
+
+func subWs(symbolList []string) *websocket.Conn {
+	var subUrl string
+	for _, s := range symbolList {
+		subUrl += strings.ToLower(s) + "@aggTrade/"
+	}
+	ws, err := websocket.Dial(BinanceWsUrl+subUrl, "", BinanceOrigin)
+	log.Printf("订阅: %s \n", subUrl)
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+	return ws
 }

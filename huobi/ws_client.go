@@ -11,11 +11,10 @@ import (
 	"io/ioutil"
 
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/websocket"
 
 	"strconv"
 	"strings"
-
-	"golang.org/x/net/websocket"
 )
 
 type subModel struct {
@@ -54,26 +53,9 @@ func HuobiWsConnect(symbolList []string) {
 		log.Println(errors.New(Name + "未找到交易所ID"))
 		return
 	}
-	ws, err := websocket.Dial(HuoBiWsUrl, "", HuoBiOrigin)
-
-	if err != nil {
-		log.Println(err.Error())
-		return
-	}
-	//循环订阅交易对
-	for _, symbol := range symbolList {
-		sub := subModel{"market." + symbol + ".trade.detail", HuoBiGId}
-		message, err := json.Marshal(sub)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		_, err = ws.Write(message)
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		log.Printf("订阅: %s \n", message)
+	ws := subWs(symbolList)
+	if ws == nil {
+		log.Panic("WS连接失败")
 	}
 	//统计连续错误次数
 	var readErrCount = 0
@@ -82,8 +64,8 @@ func HuobiWsConnect(symbolList []string) {
 		if readErrCount > HuoBiErroLimit {
 			//异常退出
 			ws.Close()
-			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
-			break
+			log.Error(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+			ws = subWs(symbolList)
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
@@ -134,4 +116,29 @@ func HuobiWsConnect(symbolList []string) {
 		}
 	}
 
+}
+
+func subWs(symbolList []string) *websocket.Conn {
+	ws, err := websocket.Dial(HuoBiWsUrl, "", HuoBiOrigin)
+
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+	//循环订阅交易对
+	for _, symbol := range symbolList {
+		sub := subModel{"market." + symbol + ".trade.detail", HuoBiGId}
+		message, err := json.Marshal(sub)
+		if err != nil {
+			log.Println(err.Error())
+			return nil
+		}
+		_, err = ws.Write(message)
+		if err != nil {
+			log.Println(err.Error())
+			return nil
+		}
+		log.Printf("订阅: %s \n", message)
+	}
+	return ws
 }

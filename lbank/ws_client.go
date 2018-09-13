@@ -5,11 +5,10 @@ import (
 	"errors"
 
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/net/websocket"
 
 	"strconv"
 	"strings"
-
-	"golang.org/x/net/websocket"
 )
 
 type trade struct {
@@ -34,25 +33,10 @@ func LBankWsConnect(symbolList []string) {
 		log.Panic(errors.New("Okex订阅的交易对数量为空"))
 	}
 
-	ws, err := websocket.Dial(LBankWsUrl, "", LBankOrigin)
-
-	if err != nil {
-		log.Println(err.Error())
-		return
+	ws := subWs(symbolList)
+	if ws == nil {
+		log.Panic("WS连接失败")
 	}
-
-	//循环订阅交易对
-	for _, symbol := range symbolList {
-		message := "{\"action\": \"subscribe\", \"subscribe\": \"trade\", \"pair\": \"" + symbol + "\"}"
-
-		_, err = ws.Write([]byte(message))
-		if err != nil {
-			log.Println(err.Error())
-			return
-		}
-		log.Printf("订阅: %s \n", message)
-	}
-
 	//统计连续错误次数
 	var readErrCount = 0
 	var msg = make([]byte, LBankBufferSzie)
@@ -60,7 +44,8 @@ func LBankWsConnect(symbolList []string) {
 		if readErrCount > LBankErrorLimit {
 			ws.Close()
 			//异常退出
-			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+			log.Error(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+			ws = subWs(symbolList)
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
@@ -88,4 +73,26 @@ func LBankWsConnect(symbolList []string) {
 		}
 		log.Println("Lbank输出对象", t)
 	}
+}
+
+func subWs(symbolList []string) *websocket.Conn {
+	ws, err := websocket.Dial(LBankWsUrl, "", LBankOrigin)
+
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+
+	//循环订阅交易对
+	for _, symbol := range symbolList {
+		message := "{\"action\": \"subscribe\", \"subscribe\": \"trade\", \"pair\": \"" + symbol + "\"}"
+
+		_, err = ws.Write([]byte(message))
+		if err != nil {
+			log.Println(err.Error())
+			return nil
+		}
+		log.Printf("订阅: %s \n", message)
+	}
+	return ws
 }

@@ -1,7 +1,12 @@
 package hitbtc
 
 import (
+	"ccxt/config"
+	"ccxt/model"
+	"ccxt/utils"
 	"errors"
+	"log"
+	"strings"
 
 	"encoding/json"
 	"strconv"
@@ -35,41 +40,29 @@ func HitbtcWsConnect(symbolList []string) {
 		logrus.Error("订阅交易对数量为空")
 		return
 	}
-
-	ws, err := websocket.Dial(HitbtcWsUrl, "", HitbtcWsUrl)
-	if err != nil {
-		logrus.Error(err.Error())
+	id := config.GetExchangeId(Name)
+	if id <= 0 {
+		log.Println(errors.New(Name + "未找到交易所ID"))
 		return
 	}
-
-	for _, s := range symbolList {
-
-		subStr := "{\"method\": \"subscribeTrades\", \"params\":{\"symbol\": \"" + s + "\"} ,\"id\": 123}"
-
-		_, err = ws.Write([]byte(subStr))
-		if err != nil {
-			logrus.Error(err.Error())
-			return
-		}
-		logrus.Infof("订阅: %s \n", subStr)
+	ws := subWs(symbolList)
+	if ws == nil {
+		return
 	}
-
 	//统计连续错误次数
 	var readErrCount = 0
 
 	var msg = make([]byte, HitbtcBufferSize)
 
 	for {
-
 		var data string
-
 		for {
 			if readErrCount > HitbtcErrorLimt {
 				//异常退出
 				ws.Close()
-				logrus.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+				logrus.Error(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+				ws = subWs(symbolList)
 			}
-
 			m, err := ws.Read(msg)
 			if err != nil {
 				logrus.Error(err.Error())
@@ -86,11 +79,45 @@ func HitbtcWsConnect(symbolList []string) {
 
 		logrus.Infof("Hitbtc接收：%s \n", data)
 		var t TradeDetail
-		err = json.Unmarshal([]byte(data), &t)
+		err := json.Unmarshal([]byte(data), &t)
 		if err != nil {
 			logrus.Errorln(err)
 			continue
 		}
-		logrus.Info("Hitbtc对象输出", t)
+		// logrus.Info("Hitbtc对象输出", t)
+
+		go DataParser(t, id)
+		go func() {
+			select {
+			case data := <-model.DataChannel:
+				log.Println("获取消息:", data.Symbol, data)
+				queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+				utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+			default:
+				logrus.Warn(Name + "无消息发送")
+			}
+		}()
 	}
+}
+
+func subWs(symbolList []string) *websocket.Conn {
+	//重新订阅
+	ws, err := websocket.Dial(HitbtcWsUrl, "", HitbtcWsUrl)
+	if err != nil {
+		logrus.Error(err.Error())
+		return nil
+	}
+
+	for _, s := range symbolList {
+
+		subStr := "{\"method\": \"subscribeTrades\", \"params\":{\"symbol\": \"" + s + "\"} ,\"id\": 123}"
+
+		_, err = ws.Write([]byte(subStr))
+		if err != nil {
+			logrus.Error(err.Error())
+			return nil
+		}
+		logrus.Infof("订阅: %s \n", subStr)
+	}
+	return ws
 }
