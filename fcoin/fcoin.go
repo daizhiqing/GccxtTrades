@@ -3,6 +3,8 @@ package fcoin
 import "ccxt/config"
 
 const (
+	Name = "fcoin"
+
 	FCoinErrorLimit = config.DEFAULT
 
 	FCoinBufferSize = config.DEFAULT_BUFFER_SIZE

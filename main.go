@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ccxt/binance"
+	"ccxt/fcoin"
 	"runtime"
 
 	"github.com/sirupsen/logrus"
@@ -32,11 +32,11 @@ func main() {
 	// huobi.StartWs("", false)
 	// lbank.StartWs("", false)
 	// okex.StartWs("", false)
-	binance.StartWs("", false)
+	// binance.StartWs("", false)
 	// zb.StartWs("", false)
 	// gateio.StartWs("", false)
 	// hitbtc.StartWs("", false)
-	// fcoin.StartWs("", false)
+	fcoin.StartWs("", false)
 	// hadax.StartWs("", false)
 	// go func() {
 	// 	for {

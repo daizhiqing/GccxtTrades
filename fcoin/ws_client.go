@@ -1,8 +1,14 @@
 package fcoin
 
 import (
+	"ccxt/config"
+	"ccxt/model"
+	"ccxt/utils"
 	"encoding/json"
+	"errors"
+	"log"
 	"strconv"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/net/websocket"
@@ -23,7 +29,7 @@ type TradeDetail struct {
 	//amount
 	Amount float64 `json:"amount"`
 	Type   string  `json:"type"`
-	Ts     int64   `json:"ts"`
+	Ts     int     `json:"ts"`
 	Id     int64   `json:"id"`
 	Side   string  `json:"side"`
 	Price  float64 `json:"price"`
@@ -39,7 +45,11 @@ func FcoinWsConnect(symbolList []string) {
 		logrus.Error(err.Error())
 		return
 	}
-
+	id := config.GetExchangeId(Name)
+	if id <= 0 {
+		log.Println(errors.New(Name + "未找到交易所ID"))
+		return
+	}
 	for index, s := range symbolList {
 		symbolList[index] = "trade." + s
 	}
@@ -81,6 +91,18 @@ func FcoinWsConnect(symbolList []string) {
 		}
 		b, _ := json.Marshal(t)
 		logrus.Infoln("FCoin对象输出：", t, string(b))
+
+		go DataParser(t, id)
+		go func() {
+			select {
+			case data := <-model.DataChannel:
+				log.Println("获取消息:", data.Symbol, data)
+				queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+				utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+			default:
+				logrus.Warn(Name + "无消息发送")
+			}
+		}()
 	}
 
 }
