@@ -2,6 +2,9 @@ package huobi
 
 import (
 	"bytes"
+	"ccxt/config"
+	"ccxt/model"
+	"ccxt/utils"
 	"compress/gzip"
 	"encoding/json"
 	"errors"
@@ -22,9 +25,9 @@ type subModel struct {
 
 type trade struct {
 	// Id        big.Int `json:"id"`
-	Price     float32 `json:"price"`
+	Price     float64 `json:"price"`
 	Direction string  `json:"direction"`
-	Amount    float32 `json:"amount"`
+	Amount    float64 `json:"amount"`
 	Ts        int     `json:"ts"`
 }
 
@@ -46,7 +49,11 @@ func HuobiWsConnect(symbolList []string) {
 		log.Println(errors.New("火币订阅的交易对数量为空"))
 		return
 	}
-
+	id := config.GetExchangeId(Name)
+	if id <= 0 {
+		log.Println(errors.New(Name + "未找到交易所ID"))
+		return
+	}
 	ws, err := websocket.Dial(HuoBiWsUrl, "", HuoBiOrigin)
 
 	if err != nil {
@@ -113,6 +120,17 @@ func HuobiWsConnect(symbolList []string) {
 		if tradeDetail.Ch != "" {
 			//log.Println("转化：", string(temp))
 			log.Println("Huobi输出对象：", tradeDetail)
+			go DataParser(tradeDetail, id)
+			go func() {
+				select {
+				case data := <-model.DataChannel:
+					log.Println("获取消息:", data.Symbol, data)
+					queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+					utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+				default:
+					log.Warn(Name + "无消息发送")
+				}
+			}()
 		}
 	}
 

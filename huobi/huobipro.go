@@ -3,6 +3,7 @@ package huobi
 import "ccxt/config"
 
 const (
+	Name = "huobipro"
 	//火币WS的最大EOF连接次数
 	HuoBiErroLimit = config.DEFAULT
 
