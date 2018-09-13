@@ -2,6 +2,9 @@ package hadax
 
 import (
 	"bytes"
+	"ccxt/config"
+	"ccxt/model"
+	"ccxt/utils"
 	"compress/gzip"
 	"encoding/json"
 	"errors"
@@ -10,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/sirupsen/logrus"
 	"golang.org/x/net/websocket"
 )
 
@@ -20,9 +24,9 @@ type subModel struct {
 
 type trade struct {
 	// Id        int64   `json:"id"`
-	Price     float32 `json:"price"`
+	Price     float64 `json:"price"`
 	Direction string  `json:"direction"`
-	Amount    float32 `json:"amount"`
+	Amount    float64 `json:"amount"`
 	Ts        int     `json:"ts"`
 }
 
@@ -44,7 +48,11 @@ func HadaxWsConnect(symbolList []string) {
 		log.Println(errors.New("Hadax订阅的交易对数量为空"))
 		return
 	}
-
+	id := config.GetExchangeId(Name)
+	if id <= 0 {
+		log.Println(errors.New(Name + "未找到交易所ID"))
+		return
+	}
 	ws, err := websocket.Dial(HadaxWsUrl, "", HadaxWsUrl)
 
 	if err != nil {
@@ -110,7 +118,19 @@ func HadaxWsConnect(symbolList []string) {
 		//temp ,_ :=json.Marshal(tradeDetail)
 		if tradeDetail.Ch != "" {
 			//log.Println("转化：", string(temp))
-			log.Println("Hadax输出对象：", tradeDetail)
+			// log.Println("Hadax输出对象：", tradeDetail)
+
+			go DataParser(tradeDetail, id)
+			go func() {
+				select {
+				case data := <-model.DataChannel:
+					log.Println("获取消息:", data.Symbol, data)
+					queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+					utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+				default:
+					logrus.Warn(Name + "无消息发送")
+				}
+			}()
 		}
 	}
 

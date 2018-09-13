@@ -3,6 +3,8 @@ package hadax
 import "ccxt/config"
 
 const (
+	Name = "hadax"
+
 	HadaxErrorLimit = config.DEFAULT
 
 	HadaxBufferSize = config.DEFAULT_BUFFER_SIZE
