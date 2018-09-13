@@ -20,11 +20,15 @@ func init() {
 //发送消息到
 func SendMsg(exchange, queue string, body []byte) {
 	ch, err := conn.Channel()
-	CheckErr(err)
+	if err != nil {
+		logrus.Error(err)
+		logrus.Errorf("连接失败 %s", body)
+		return
+	}
 	defer ch.Close()
 	q, err := ch.QueueDeclare(
 		queue, // name
-		true, // durable
+		true,  // durable
 		false, // delete when unused
 		false, // exclusive
 		false, // no-wait
@@ -49,6 +53,11 @@ func SendMsg(exchange, queue string, body []byte) {
 //该方法会造成阻塞，协程调用
 func ReceiveMsg(consumer, queue string, f func([]byte)) {
 	ch, err := conn.Channel()
+	if err != nil {
+		logrus.Error(err)
+		logrus.Error("消费失败监听失败")
+		return
+	}
 	CheckErr(err)
 	defer ch.Close()
 	q, err := ch.QueueDeclare(
