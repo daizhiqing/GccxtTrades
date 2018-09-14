@@ -73,7 +73,7 @@ func OkexWsConnect(symbolList []string) {
 		}
 		timeStr := tradeDetail[0].Data[0][3]
 		//转成时间戳
-		loc, _ := time.LoadLocation("BJT")
+		loc, _ := time.LoadLocation("Asia/Shanghai")
 		nowStr := time.Now().In(loc).Format("2006-01-02 ")
 		tm, err := time.ParseInLocation("2006-01-02 15:04:05", nowStr+timeStr, loc)
 
@@ -87,7 +87,7 @@ func OkexWsConnect(symbolList []string) {
 			tradeDetail[0].Data[0][0],
 			tradeDetail[0].Data[0][1],
 			tradeDetail[0].Data[0][2],
-			tm.Unix(),
+			tm.Unix()*1000,
 			tradeDetail[0].Data[0][4]}
 		log.Println("Okex输出对象：", transData)
 

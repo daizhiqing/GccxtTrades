@@ -43,7 +43,7 @@ func DataParser(t TradeDetail, id int) {
 				return
 			}
 
-			trade.Timestamp = strconv.FormatInt(theTime.Unix(), 10)
+			trade.Timestamp = strconv.FormatInt(theTime.Unix()*1000, 10)
 
 			commonData.Trades = append(commonData.Trades, trade)
 		}

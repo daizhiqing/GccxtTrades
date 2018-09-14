@@ -7,6 +7,7 @@ import (
 	"runtime"
 
 	"golang.org/x/net/websocket"
+	"time"
 )
 
 func echoHandler(ws *websocket.Conn) {
@@ -48,4 +49,17 @@ func mainBak() {
 	if err != nil {
 		panic("ListenAndServe: " + err.Error())
 	}
+}
+
+func main()  {
+	//timeStr := "13:53:13"
+	////转成时间戳
+	//	loc, _ := time.LoadLocation("Asia/Shanghai")
+	//nowStr := time.Now().In(loc).Format("2006-01-02 ")
+	//tm, err := time.ParseInLocation("2006-01-02 15:04:05", nowStr+timeStr, loc)
+	//if err != nil{
+	//	panic(err)
+	//}
+	fmt.Println(time.Now().Unix())
+	fmt.Println(time.Now().UnixNano())
 }

@@ -18,7 +18,7 @@ func SendMsg(exchange, queue string, body []byte) {
 		return
 	}
 	conn, err := amqp.Dial(AmqpUrl)
-
+	defer conn.Close()
 	if err != nil {
 		logrus.Error(err)
 		logrus.Errorf(AmqpUrl+"连接失败 %s", body)
@@ -69,6 +69,7 @@ func ReceiveMsg(consumer, queue string, f func([]byte)) {
 		logrus.Errorf(AmqpUrl+"连接失败 %s", queue)
 		return
 	}
+	defer conn.Close()
 	ch, err := conn.Channel()
 	if err != nil {
 		logrus.Error(err)

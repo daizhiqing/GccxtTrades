@@ -24,7 +24,7 @@ type trade struct {
 
 type TradeDetail struct {
 	Pair   string `json:"pair"`
-	Trade  trade  `json:"trade"`
+	Trade  trade `json:"trade"`
 	Type   string `json:"type"`
 	SERVER string `json:"SERVER"`
 	TS     string `json:"TS"`
