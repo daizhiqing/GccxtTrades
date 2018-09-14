@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"golang.org/x/net/websocket"
+	"ccxt/config"
 )
 
 type detail struct {
@@ -32,11 +33,59 @@ func ZbWsConnect(symbolList []string) {
 		log.Println(errors.New("ZB订阅的交易对数量为空"))
 		return
 	}
+	id := config.GetExchangeId(Name)
+	if id <= 0 {
+		log.Println(errors.New(Name + "未找到交易所ID"))
+		return
+	}
+	ws := subWs(symbolList)
+
+	//统计连续错误次数
+	var readErrCount = 0
+
+	var msg = make([]byte, ZbMsgBufferSize)
+
+	for {
+		var data string
+		for {
+			if readErrCount > ZbErrorLimit {
+				//异常退出
+				ws.Close()
+				log.Error(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+				ws = subWs(symbolList)
+			}
+			m, err := ws.Read(msg)
+			if err != nil {
+				log.Error(err.Error())
+				readErrCount++
+				continue
+			}
+			data += string(msg[:m])
+			if m <= (ZbMsgBufferSize - 1) {
+				break
+			}
+		}
+		//连接正常重置
+		readErrCount = 0
+		log.Printf("Zb接收：%s \n", data)
+		var tradeDetail TradeDetail
+		err := json.Unmarshal([]byte(data), &tradeDetail)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		if tradeDetail.Channel != "" {
+			log.Println("Zb输出对象：", tradeDetail)
+		}
+	}
+}
+
+func subWs(symbolList []string) *websocket.Conn {
 	ws, err := websocket.Dial(ZbWsUrl, "", ZbOrigi)
 
 	if err != nil {
 		log.Println(err.Error())
-		return
+		return nil
 	}
 	//循环订阅交易对
 	for _, symbol := range symbolList {
@@ -46,40 +95,10 @@ func ZbWsConnect(symbolList []string) {
 		_, err = ws.Write([]byte(subStr))
 		if err != nil {
 			log.Println(err.Error())
-			return
+			return nil
 		}
 		log.Printf("订阅: %s \n", subStr)
 	}
 
-	//统计连续错误次数
-	var readErrCount = 0
-
-	var msg = make([]byte, ZbMsgBufferSize)
-
-	for {
-		if readErrCount > ZbErrorLimit {
-			//异常退出
-			ws.Close() //关闭连接
-			log.Panic(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
-
-		}
-		m, err := ws.Read(msg)
-		if err != nil {
-			log.Println(err.Error())
-			readErrCount++
-			continue
-		}
-		//连接正常重置
-		readErrCount = 0
-		log.Printf("Zb接收：%s \n", msg[:m])
-		var tradeDetail TradeDetail
-		err = json.Unmarshal(msg[:m], &tradeDetail)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		if tradeDetail.Channel != "" {
-			log.Println("Zb输出对象：", tradeDetail)
-		}
-	}
+	return ws
 }
