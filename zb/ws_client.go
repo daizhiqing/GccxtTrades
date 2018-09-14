@@ -10,6 +10,9 @@ import (
 
 	"golang.org/x/net/websocket"
 	"ccxt/config"
+	"ccxt/model"
+	"strings"
+	"ccxt/utils"
 )
 
 type detail struct {
@@ -76,6 +79,18 @@ func ZbWsConnect(symbolList []string) {
 		}
 		if tradeDetail.Channel != "" {
 			log.Println("Zb输出对象：", tradeDetail)
+
+			go DataParser(tradeDetail, id)
+			go func() {
+				select {
+				case data := <-model.DataChannel:
+					log.Println("获取消息:", data.Symbol, data)
+					queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+					utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+				default:
+					log.Warn(Name + "无消息发送")
+				}
+			}()
 		}
 	}
 }
