@@ -10,12 +10,13 @@
 * Bitfinex :  wss://api.bitfinex.com/ws
 * Binance  :  wss://stream.binance.com:9443/stream
 * Gateio   :  wss://ws.gateio.io/v3/
-* FCoin    :  wss://api.fcoin.com/v2/ws"
-* Hitbtc   :  wss://api.hitbtc.com/api/2/ws"
+* FCoin    :  wss://api.fcoin.com/v2/ws
+* Hitbtc   :  wss://api.hitbtc.com/api/2/ws
+* Hadax    :  wss://api.hadax.com/ws
 
 每个交易所根据不同包名分割，根目录下启动(部分交易所需要翻墙，建议海外或者香港服务器)
 ```bash
-go run main.go
+go run main.go -name="交易所名字" -mq="amqp://user:pwd@host:port/vhost"
 ```
 ```go
 //开启对应交易所WebSocket连接 
@@ -27,6 +28,9 @@ zb.StartWs("http代理地址"  , true)
 
 # 项目规划
 * 对接比较出名的几家交易所历史交易WebSocket接口（其实K线、涨幅等数据都可以根据历史交易计算得出）
+* 断线重连
+* 统一的数据格式输出到RabbitMQ :
+```json
+{"exchangeId":11,"symbol":"NANO/BTC","trades":[{"symbol":"NANO/BTC","side":"buy","amount":"12.84000000","price":"0.00037230","timestamp":"1536910985284"}],"exchange":"binance"}
+```
 
-* 统一的数据格式输出（待开发）
-* 添加数据存储模块Hbase或redis（待开发）
