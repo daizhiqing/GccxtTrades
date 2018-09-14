@@ -3,6 +3,9 @@ package zb
 import "ccxt/config"
 
 const (
+
+	Name = "zb"
+
 	ZbErrorLimit = config.DEFAULT
 
 	ZbMsgBufferSize = config.DEFAULT_BUFFER_SIZE * 10

@@ -3,6 +3,9 @@ package okex
 import "ccxt/config"
 
 const (
+
+	Name = "okex"
+
 	OkexBufferSize = config.DEFAULT_BUFFER_SIZE
 
 	OKexErrLimit = config.DEFAULT

@@ -9,12 +9,15 @@ import (
 
 	"strconv"
 	"strings"
+	"ccxt/model"
+	"ccxt/config"
+	"ccxt/utils"
 )
 
 type trade struct {
-	Volume    float32 `json:"volume"`
-	Price     float32 `json:"price"`
-	Amount    float32 `json:"amount"`
+	Volume    float64 `json:"volume"`
+	Price     float64 `json:"price"`
+	Amount    float64 `json:"amount"`
 	Direction string  `json:"direction"`
 	TS        string  `json:"TS"`
 }
@@ -32,7 +35,11 @@ func LBankWsConnect(symbolList []string) {
 	if len(symbolList) <= 0 {
 		log.Panic(errors.New("Okex订阅的交易对数量为空"))
 	}
-
+	id := config.GetExchangeId(Name)
+	if id <= 0 {
+		log.Println(errors.New(Name + "未找到交易所ID"))
+		return
+	}
 	ws := subWs(symbolList)
 	if ws == nil {
 		log.Panic("WS连接失败")
@@ -72,6 +79,18 @@ func LBankWsConnect(symbolList []string) {
 			continue
 		}
 		log.Println("Lbank输出对象", t)
+
+		go DataParser(t, id)
+		go func() {
+			select {
+			case data := <-model.DataChannel:
+				log.Println("获取消息:", data.Symbol, data)
+				queueName := config.QueuePre + data.Exchange + "_" + strings.ToLower(strings.Split(data.Symbol, "/")[1])
+				utils.SendMsg(config.MqExchange, queueName, data.ToBody())
+			default:
+				log.Warn(Name + "无消息发送")
+			}
+		}()
 	}
 }
 

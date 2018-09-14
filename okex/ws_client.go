@@ -32,28 +32,11 @@ func OkexWsConnect(symbolList []string) {
 		log.Panic(errors.New("Okex订阅的交易对数量为空"))
 	}
 
-	ws, err := websocket.Dial(OkexWsUrl, "", OkexOrigin)
+	ws := subWs(symbolList)
 
-	if err != nil {
-		log.Println(err.Error())
-		return
+	if ws == nil{
+		log.Panic("WS连接失败")
 	}
-	var subList []map[string]string
-	//循环订阅交易对
-	for _, symbol := range symbolList {
-
-		subStr := map[string]string{"event": "addChannel", "channel": "ok_sub_spot_" + symbol + "_deals"}
-		subList = append(subList, subStr)
-
-	}
-	sub, _ := json.Marshal(subList)
-	_, err = ws.Write(sub)
-	if err != nil {
-		log.Println(err.Error())
-		return
-	}
-	log.Printf("订阅: %s \n", sub)
-
 	//统计连续错误次数
 	var readErrCount = 0
 	var msg = make([]byte, OkexBufferSize)
@@ -100,4 +83,30 @@ func OkexWsConnect(symbolList []string) {
 		log.Println("Okex输出对象：", transData)
 	}
 
+}
+
+
+func subWs(symbolList []string) *websocket.Conn{
+	ws, err := websocket.Dial(OkexWsUrl, "", OkexOrigin)
+
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+	var subList []map[string]string
+	//循环订阅交易对
+	for _, symbol := range symbolList {
+
+		subStr := map[string]string{"event": "addChannel", "channel": "ok_sub_spot_" + symbol + "_deals"}
+		subList = append(subList, subStr)
+
+	}
+	sub, _ := json.Marshal(subList)
+	_, err = ws.Write(sub)
+	if err != nil {
+		log.Println(err.Error())
+		return nil
+	}
+	log.Printf("订阅: %s \n", sub)
+	return  ws
 }

@@ -5,16 +5,7 @@ import (
 	"github.com/streadway/amqp"
 )
 
-var conn *amqp.Connection
-var AmqpUrl = "amqp://user:pwd@host:port/vhost"
-
-func init() {
-	var err error
-	conn, err = amqp.Dial(AmqpUrl)
-	CheckErr(err)
-
-	logrus.Warn("初始化连接：", AmqpUrl)
-}
+var AmqpUrl = ""
 
 //发送消息到
 func SendMsg(exchange, queue string, body []byte) {
@@ -23,12 +14,21 @@ func SendMsg(exchange, queue string, body []byte) {
 			logrus.Error(err) // 这里的err其实就是panic传入的内容
 		}
 	}()
-	var err error
+	if AmqpUrl==""{
+		return
+	}
+	conn, err := amqp.Dial(AmqpUrl)
+
+	if err != nil {
+		logrus.Error(err)
+		logrus.Errorf(AmqpUrl+"连接失败 %s", body)
+		return
+	}
 
 	ch, err := conn.Channel()
 	if err != nil {
 		logrus.Error(err)
-		logrus.Errorf("连接失败 %s", body)
+		logrus.Errorf("Channel open 失败 %s", body)
 		return
 	}
 
@@ -59,7 +59,16 @@ func SendMsg(exchange, queue string, body []byte) {
 
 //该方法会造成阻塞，协程调用
 func ReceiveMsg(consumer, queue string, f func([]byte)) {
+	if AmqpUrl==""{
+		return
+	}
+	conn, err := amqp.Dial(AmqpUrl)
 
+	if err != nil {
+		logrus.Error(err)
+		logrus.Errorf(AmqpUrl+"连接失败 %s", queue)
+		return
+	}
 	ch, err := conn.Channel()
 	if err != nil {
 		logrus.Error(err)

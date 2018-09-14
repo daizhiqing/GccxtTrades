@@ -3,6 +3,9 @@ package lbank
 import "ccxt/config"
 
 const (
+
+	Name = "lbank"
+
 	LBankErrorLimit = config.DEFAULT
 
 	LBankBufferSzie = config.DEFAULT_BUFFER_SIZE
