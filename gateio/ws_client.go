@@ -64,8 +64,11 @@ func GateioWsConnect(sysList []string) {
 			if readErrCount > GeteioErrorLimit {
 				//异常退出
 				ws.Close()
-				logrus.Panic(("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
+				logrus.Error(("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
 				ws = subWs(sysList)
+				if ws == nil{
+					continue
+				}
 			}
 			m, err := ws.Read(msg)
 			if err != nil {

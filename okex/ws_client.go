@@ -55,6 +55,9 @@ func OkexWsConnect(symbolList []string) {
 			//异常退出
 			log.Error(errors.New("WebSocket异常连接数连续大于" + strconv.Itoa(readErrCount)))
 			ws = subWs(symbolList)
+			if ws == nil{
+				continue
+			}
 		}
 		m, err := ws.Read(msg)
 		if err != nil {
