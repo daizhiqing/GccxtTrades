@@ -49,7 +49,7 @@ func SendMsg(exchange, queue string, body []byte) {
 		false,    // mandatory
 		false,    // immediate
 		amqp.Publishing{
-			ContentType: "text/plain",
+			ContentType: "application/json",
 			Body:        body,
 		})
 	CheckErr(err)
