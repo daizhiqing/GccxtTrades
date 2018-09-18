@@ -1,5 +1,5 @@
 # Gccxt
-数字货币交易所WebSocket对接历史交易记录 Go版本实现
+数字货币交易所WebSocket对接历史交易记录 Go版本实现，主要对接各大交易所的历史交易单数据，提供到消息队列进行统一数据分析
 
 目前已经对接交易所(持续更新。。。):
 
@@ -24,6 +24,10 @@ go run main.go -name="交易所名字" -mq="amqp://user:pwd@host:port/vhost"
 huobi.StartWs(""  , false)
 zb.StartWs("http代理地址"  , true)
 ...
+```
+交易所名称列表：
+```json
+binance bitfinex fcoin gateio hadax hitbtc2 huobipro lbank okex zb
 ```
 
 # 项目规划
