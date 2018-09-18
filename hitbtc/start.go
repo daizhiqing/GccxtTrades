@@ -1,7 +1,7 @@
 package hitbtc
 
 import (
-	"ccxt/utils"
+	"GccxtTrades/utils"
 	"log"
 
 	"github.com/sirupsen/logrus"

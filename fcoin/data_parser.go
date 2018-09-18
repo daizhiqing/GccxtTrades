@@ -1,8 +1,8 @@
 package fcoin
 
 import (
-	"ccxt/model"
-	"ccxt/utils"
+	"GccxtTrades/model"
+	"GccxtTrades/utils"
 	"strconv"
 	"strings"
 

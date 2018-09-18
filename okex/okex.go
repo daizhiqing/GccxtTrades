@@ -1,6 +1,6 @@
 package okex
 
-import "ccxt/config"
+import "GccxtTrades/config"
 
 const (
 

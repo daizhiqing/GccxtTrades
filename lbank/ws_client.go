@@ -9,9 +9,9 @@ import (
 
 	"strconv"
 	"strings"
-	"ccxt/model"
-	"ccxt/config"
-	"ccxt/utils"
+	"GccxtTrades/model"
+	"GccxtTrades/config"
+	"GccxtTrades/utils"
 )
 
 type trade struct {

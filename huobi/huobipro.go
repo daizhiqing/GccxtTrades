@@ -1,6 +1,6 @@
 package huobi
 
-import "ccxt/config"
+import "GccxtTrades/config"
 
 const (
 	Name = "huobipro"

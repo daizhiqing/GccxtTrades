@@ -1,7 +1,7 @@
 package fcoin
 
 import (
-	"ccxt/utils"
+	"GccxtTrades/utils"
 
 	"github.com/sirupsen/logrus"
 )

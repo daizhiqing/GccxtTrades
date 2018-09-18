@@ -1,7 +1,7 @@
 package model
 
 import (
-	"ccxt/config"
+	"GccxtTrades/config"
 	"encoding/json"
 
 	"github.com/sirupsen/logrus"

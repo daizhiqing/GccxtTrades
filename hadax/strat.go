@@ -1,7 +1,7 @@
 package hadax
 
 import (
-	"ccxt/utils"
+	"GccxtTrades/utils"
 
 	"github.com/sirupsen/logrus"
 )

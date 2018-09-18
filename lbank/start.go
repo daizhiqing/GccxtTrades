@@ -1,7 +1,7 @@
 package lbank
 
 import (
-	"ccxt/utils"
+	"GccxtTrades/utils"
 	"encoding/json"
 
 	log "github.com/sirupsen/logrus"

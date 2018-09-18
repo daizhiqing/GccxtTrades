@@ -1,6 +1,6 @@
 package gateio
 
-import "ccxt/config"
+import "GccxtTrades/config"
 
 const (
 	Name = "gateio"

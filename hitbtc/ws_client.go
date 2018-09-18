@@ -1,9 +1,9 @@
 package hitbtc
 
 import (
-	"ccxt/config"
-	"ccxt/model"
-	"ccxt/utils"
+	"GccxtTrades/config"
+	"GccxtTrades/model"
+	"GccxtTrades/utils"
 	"errors"
 	"log"
 	"strings"

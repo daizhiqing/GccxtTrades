@@ -1,6 +1,6 @@
 package binance
 
-import "ccxt/config"
+import "GccxtTrades/config"
 
 const (
 	Name = "binance"

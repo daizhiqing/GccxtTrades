@@ -1,6 +1,6 @@
 package hadax
 
-import "ccxt/config"
+import "GccxtTrades/config"
 
 const (
 	Name = "hadax"

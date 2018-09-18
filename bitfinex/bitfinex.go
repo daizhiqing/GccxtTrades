@@ -1,6 +1,6 @@
 package bitfinex
 
-import "ccxt/config"
+import "GccxtTrades/config"
 
 const (
 	Name = "bitfinex"

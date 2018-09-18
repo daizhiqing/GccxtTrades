@@ -2,9 +2,9 @@ package huobi
 
 import (
 	"bytes"
-	"ccxt/config"
-	"ccxt/model"
-	"ccxt/utils"
+	"GccxtTrades/config"
+	"GccxtTrades/model"
+	"GccxtTrades/utils"
 	"compress/gzip"
 	"encoding/json"
 	"errors"

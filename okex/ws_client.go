@@ -10,10 +10,10 @@ import (
 	"time"
 
 	"golang.org/x/net/websocket"
-	"ccxt/config"
-	"ccxt/model"
+	"GccxtTrades/config"
+	"GccxtTrades/model"
 	"strings"
-	"ccxt/utils"
+	"GccxtTrades/utils"
 )
 
 type tradeDetail struct {

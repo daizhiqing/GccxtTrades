@@ -1,6 +1,6 @@
 package hitbtc
 
-import "ccxt/config"
+import "GccxtTrades/config"
 
 const (
 	Name = "hitbtc2"

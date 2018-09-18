@@ -1,8 +1,8 @@
 package huobi
 
 import (
-	"ccxt/model"
-	"ccxt/utils"
+	"GccxtTrades/model"
+	"GccxtTrades/utils"
 	"strconv"
 	"strings"
 

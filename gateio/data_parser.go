@@ -1,8 +1,8 @@
 package gateio
 
 import (
-	"ccxt/model"
-	"ccxt/utils"
+	"GccxtTrades/model"
+	"GccxtTrades/utils"
 	"strconv"
 
 	"github.com/sirupsen/logrus"

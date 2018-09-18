@@ -8,9 +8,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"ccxt/config"
-	"ccxt/model"
-	"ccxt/utils"
+	"GccxtTrades/config"
+	"GccxtTrades/model"
+	"GccxtTrades/utils"
 	"strconv"
 	"strings"
 

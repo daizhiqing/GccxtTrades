@@ -1,9 +1,9 @@
 package bitfinex
 
 import (
-	"ccxt/config"
-	"ccxt/model"
-	"ccxt/utils"
+	"GccxtTrades/config"
+	"GccxtTrades/model"
+	"GccxtTrades/utils"
 	"encoding/json"
 	"errors"
 	"strings"
