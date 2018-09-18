@@ -26,8 +26,19 @@ zb.StartWs("http代理地址"  , true)
 ...
 ```
 交易所名称列表：
-```json
-binance bitfinex fcoin gateio hadax hitbtc2 huobipro lbank okex zb
+
+交易所名称 | 官网
+---- | ---
+binance | https://www.binance.com/
+bitfinex | https://www.bitfinex.com/
+fcoin | https://www.fcoin.com/
+gateio | https://www.gate.io/
+hadax | https://www.hadax.com
+hitbtc2 | https://www.hitbtc.com/
+huobipro | https://www.hbg.com
+lbank | https://www.lbank.info/
+okex | https://www.okex.com/
+zb | https://www.zb.com/
 ```
 
 # 项目规划
