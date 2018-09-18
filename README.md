@@ -39,7 +39,7 @@ huobipro | https://www.hbg.com
 lbank | https://www.lbank.info/
 okex | https://www.okex.com/
 zb | https://www.zb.com/
-```
+
 
 # 项目规划
 * 对接比较出名的几家交易所历史交易WebSocket接口（其实K线、涨幅等数据都可以根据历史交易计算得出）
